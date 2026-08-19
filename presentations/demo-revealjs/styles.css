@@ -1,0 +1,148 @@
+/* Design of this presentation only. Every presentation folder owns its own CSS. */
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700&family=Inter:wght@400;600&display=swap");
+
+:root {
+  --paper: #f4f1de;
+  --ink: #2c2c2c;
+  --muted: #6b6b6b;
+  --accent: #e07a5f;
+  --deep: #3d5a55;
+}
+
+.reveal {
+  color: var(--ink);
+  font-family: "Inter", Helvetica, sans-serif;
+  font-size: 22pt;
+}
+
+.reveal-viewport {
+  background: var(--paper);
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+  margin: 0 0 24pt;
+  color: var(--deep);
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-transform: none;
+}
+
+.reveal h1 {
+  font-size: 46pt;
+}
+.reveal h2 {
+  font-size: 34pt;
+}
+.reveal h3 {
+  font-size: 20pt;
+  margin-bottom: 10pt;
+}
+
+.reveal section {
+  text-align: left;
+}
+.reveal ul {
+  margin-left: 24pt;
+}
+.reveal li {
+  margin-bottom: 14pt;
+}
+
+.reveal code {
+  padding: 1pt 5pt;
+  border-radius: 4pt;
+  background: rgba(61, 90, 85, 0.1);
+  font-size: 0.85em;
+}
+
+.reveal pre {
+  width: 100%;
+  box-shadow: none;
+  font-size: 14pt;
+}
+
+.reveal pre code {
+  padding: 16pt 20pt;
+  border-radius: 8pt;
+  background: #23272e;
+}
+
+.title-slide {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding-left: 8%;
+  background: linear-gradient(
+    135deg,
+    var(--deep) 0%,
+    #2c2c2c 65%,
+    var(--accent) 160%
+  );
+}
+
+.title-slide h1 {
+  color: var(--paper);
+}
+.title-slide .subtitle {
+  margin: 0;
+  color: rgba(244, 241, 222, 0.85);
+  font-size: 22pt;
+}
+.title-slide .meta {
+  margin-top: 28pt;
+  color: rgba(244, 241, 222, 0.55);
+  font-size: 14pt;
+}
+.title-slide code {
+  background: rgba(244, 241, 222, 0.16);
+  color: var(--paper);
+}
+
+.eyebrow {
+  margin: 0 0 10pt;
+  color: var(--accent);
+  font-size: 13pt;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24pt;
+}
+
+.card {
+  padding: 22pt;
+  border: 1pt solid rgba(44, 44, 44, 0.15);
+  border-top: 4pt solid var(--deep);
+  border-radius: 8pt;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.card.accent {
+  border-top-color: var(--accent);
+}
+.card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 17pt;
+}
+
+.math {
+  margin-top: 26pt;
+  color: var(--deep);
+  text-align: center;
+}
+
+.reveal .progress {
+  color: var(--accent);
+}
+.reveal .controls {
+  color: var(--deep);
+}

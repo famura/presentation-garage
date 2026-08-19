@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A five-slide reveal.js demo presentation showing the layouts this garage ships with."
+    />
+    <meta name="date" content="2026-08-18" />
+    <title>reveal.js Demo</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='16' fill='%232c2c2c'/><circle cx='50' cy='50' r='26' fill='%23e07a5f'/></svg>"
+    />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-dark.min.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <section class="title-slide">
+          <p class="eyebrow">Presentation Garage</p>
+          <h1>reveal.js Demo</h1>
+          <p class="subtitle">Five slides, one folder, zero build step</p>
+          <p class="meta">Delete this folder once you have your own presentations</p>
+          <aside class="notes">Everything visual lives in this folder: styles.css and an inline SVG favicon.</aside>
+        </section>
+
+        <section>
+          <h2>How a presentation works</h2>
+          <ul>
+            <li class="fragment">One folder under <code>presentations/</code> with an <code>index.html</code>.</li>
+            <li class="fragment">reveal.js and plugins come from a pinned CDN &mdash; nothing to install.</li>
+            <li class="fragment">
+              CSS, fonts, and images stay inside the folder, so every presentation can look different.
+            </li>
+            <li class="fragment"><code>task manifest</code> picks the folder up for the landing page.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Two columns</h2>
+          <div class="columns">
+            <div class="card">
+              <h3>Online</h3>
+              <p>
+                GitHub pages serves the repository as-is. Push to your published branch (typically `main`) and the
+                presentation is live.
+              </p>
+            </div>
+            <div class="card accent">
+              <h3>Offline</h3>
+              <p><code>task bundle</code> inlines every asset into a single HTML file under <code>dist/</code>.</p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <h2>Code and math</h2>
+          <pre><code class="language-bash" data-trim>
+task serve                    # local garage at :8000
+task bundle -- demo-revealjs  # dist/demo-revealjs.html
+        </code></pre>
+          <p class="math">\[ \text{slides} = \text{content} \times \text{contrast}^2 \]</p>
+        </section>
+
+        <section class="title-slide">
+          <h1>Your turn</h1>
+          <p class="subtitle">Ask the <code>revealjs-create</code> skill for a new presentation</p>
+          <aside class="notes">The revealjs-evaluate skill reviews the result and reports what to fix.</aside>
+        </section>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+    <script>
+      Reveal.initialize({
+        hash: true,
+        transition: "slide",
+        plugins: [RevealNotes, RevealHighlight, RevealMath.KaTeX],
+      });
+    </script>
+  </body>
+</html>

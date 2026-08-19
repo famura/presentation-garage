@@ -1,0 +1,74 @@
+version: "3"
+
+vars:
+  PORT: '{{.PORT | default "8000"}}'
+  OPEN: '{{if eq OS "darwin"}}open{{else}}xdg-open{{end}}'
+
+tasks:
+  default:
+    desc: List the available commands
+    silent: true
+    cmds:
+      - task --list
+
+  setup:
+    desc: "Enable GitHub pages and install the agent skills (usage: task setup -- <branch>, default main)"
+    silent: true
+    vars:
+      BRANCH: '{{.CLI_ARGS | default "main"}}'
+    cmds:
+      - |
+        mkdir -p .claude .github
+        ln -sfn ../.agents/skills .claude/skills
+        ln -sfn ../.agents/skills .github/skills
+        echo "Skills installed: .claude/skills and .github/skills link to .agents/skills"
+      - |
+        if ! command -v gh >/dev/null; then
+          echo "gh not found. Enable pages manually: Settings > pages > Deploy from a branch > {{.BRANCH}} > / (root)"
+          exit 0
+        fi
+        repo=$(gh repo view --json nameWithOwner -q .nameWithOwner)
+        gh api -X POST "repos/$repo/pages" -f "source[branch]={{.BRANCH}}" -f "source[path]=/" >/dev/null 2>&1 \
+          || gh api -X PUT "repos/$repo/pages" -f "source[branch]={{.BRANCH}}" -f "source[path]=/" >/dev/null
+        echo "Pages enabled: $(gh api "repos/$repo/pages" -q .html_url)"
+
+  deps:
+    desc: Install the offline bundler (monolith), pulled in by bundle
+    internal: true
+    silent: true
+    cmds:
+      - |
+        if command -v monolith >/dev/null; then exit 0; fi
+        if command -v brew >/dev/null; then brew install monolith
+        elif command -v cargo >/dev/null; then cargo install monolith
+        else echo "Install monolith manually https://github.com/Y2Z/monolith for offline presentations"; fi
+
+  manifest:
+    desc: Rebuild garage.json from the folders under presentations/
+    cmds:
+      - python3 scripts/manifest.py
+
+  serve:
+    desc: Serve the garage locally at http://localhost:{{.PORT}}
+    deps: [manifest]
+    cmds:
+      - ({{.OPEN}} "http://localhost:{{.PORT}}" >/dev/null 2>&1 &)
+      - python3 -m http.server {{.PORT}}
+
+  bundle:
+    desc: "Bundle presentations for offline use into dist/ (usage: task bundle -- demo-revealjs)"
+    deps: [deps]
+    cmds:
+      - python3 scripts/bundle.py {{.CLI_ARGS}}
+      - task: manifest
+
+  open:
+    desc: Open the published garage on GitHub pages
+    silent: true
+    cmds:
+      - |
+        remote=$(git remote get-url origin)
+        user=$(basename "$(dirname "$remote")" | sed 's/.*[:/]//')
+        url="https://$user.github.io/$(basename -s .git "$remote")/"
+        echo "$url"
+        {{.OPEN}} "$url"

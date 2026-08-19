@@ -1,0 +1,45 @@
+description: Submit a generic issue.
+name: Generic Issue
+
+body:
+  - attributes:
+      value: |
+        ## :shrug: Issue
+
+        Thanks for taking the time to prepare and submit this issue!
+    type: markdown
+
+  - attributes:
+      label: Basics
+      description: Please check all boxes below.
+      options:
+        - label: I could not find any existing issues for what I'm reporting
+          required: true
+        - label: >
+            I have selected at least one `type:` label
+          required: true
+        - label: >
+            I have selected at least one `area:` label
+          required: false
+    type: checkboxes
+
+  - attributes:
+      label: Description?
+      description: Provide a high-level description of your issue.
+    type: textarea
+    validations:
+      required: true
+
+  - attributes:
+      label: Solution?
+      description: Describe on a high-level how you would solve this issue.
+    type: textarea
+    validations:
+      required: false
+
+  - attributes:
+      label: Additional Information?
+      placeholder: |
+        - Related issues or pull requests: #123
+        - Screenshots
+    type: textarea

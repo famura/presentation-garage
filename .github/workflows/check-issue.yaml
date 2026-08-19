@@ -1,0 +1,74 @@
+name: Check issue
+
+on:
+  issues:
+    types: [labeled, opened, unlabeled]
+
+concurrency:
+  group: ${{ github.workflow }}/${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+permissions:
+  issues: write
+
+jobs:
+  labels:
+    name: Labels
+    if: github.repository == 'famura/presentation-garage'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      comment_header: |
+        ## :card_index_dividers: Missing Labels
+
+        We categorize issues using specific label groups to help us prioritize and assign them.
+
+    steps:
+      - name: Check if required label prefixes are missing
+        id: check-labels
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const requiredPrefixes = ['area:', 'type:'];
+            const names = (context.payload.issue && context.payload.issue.labels)
+              ? context.payload.issue.labels.map(label => label.name)
+              : [];
+            const missingPrefixes = requiredPrefixes.filter(prefix => !names.some(name => name.startsWith(prefix)));
+            core.setOutput('missing-prefixes', missingPrefixes)
+            core.setOutput('missing-prefixes-md', missingPrefixes.map(prefix => `- \`${prefix}\``).join('\n'))
+
+      - name: Find comment
+        id: find-comment
+        uses: peter-evans/find-comment@v4
+        with:
+          body-includes: "${{ env.comment_header }}"
+          comment-author: "github-actions[bot]"
+          issue-number: ${{ github.event.issue.number }}
+
+      - name: Create or update comment
+        if: ${{ steps.check-labels.outputs.missing-prefixes != '[]' }}
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+            ${{ env.comment_header }}
+
+            Please add label(s) with the required prefix(es):
+
+            ${{ steps.check-labels.outputs.missing-prefixes-md }}
+          edit-mode: replace
+          reactions-edit-mode: replace
+
+      - name: Resolve comment
+        if: ${{ steps.check-labels.outputs.missing-prefixes == '[]' && steps.find-comment.outputs.comment-id != 0 }}
+        uses: peter-evans/create-or-update-comment@v5
+        with:
+          comment-id: ${{ steps.find-comment.outputs.comment-id }}
+          issue-number: ${{ github.event.issue.number }}
+          body: |
+
+            ---
+
+            :white_check_mark: All set! Thanks for updating the labels.
+          reactions: rocket

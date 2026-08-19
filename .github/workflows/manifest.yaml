@@ -1,0 +1,37 @@
+name: Manifest
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}/${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  manifest:
+    name: Rebuild garage.json
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Rebuild manifest
+        run: python3 scripts/manifest.py
+
+      - name: Commit if the manifest changed
+        run: |
+          if git diff --quiet garage.json; then
+            echo "Manifest is up to date." >> $GITHUB_STEP_SUMMARY
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit garage.json -m "Update garage.json"
+          git push

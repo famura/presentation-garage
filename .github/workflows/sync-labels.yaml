@@ -1,0 +1,29 @@
+name: Sync labels
+
+on:
+  push:
+    branches: [main]
+    paths: [.github/labels.yaml]
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  sync:
+    name: Sync labels
+    if: github.repository == 'famura/presentation-garage'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: .github/labels.yaml
+
+      - name: Apply the label set
+        uses: EndBug/label-sync@v2
+        with:
+          config-file: .github/labels.yaml
+          delete-other-labels: true

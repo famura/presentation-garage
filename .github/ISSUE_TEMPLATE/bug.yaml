@@ -1,0 +1,75 @@
+description: Submit a bug report.
+labels: ["type: bug"]
+name: Bug Report
+
+body:
+  - attributes:
+      value: |
+        ## :bug: Bug Report
+
+        Thanks for taking the time to prepare and submit this bug report!
+    type: markdown
+
+  - attributes:
+      label: Basics
+      description: Please check all boxes below.
+      options:
+        - label: I could not find any existing issues for my bug
+          required: true
+        - label: >
+            I have selected at least one `area:` label
+          required: true
+    type: checkboxes
+
+  - attributes:
+      label: Where?
+      description: Which page or command misbehaves?
+      placeholder: "The landing page, presentations/<name>/, or `task bundle`"
+    type: textarea
+    validations:
+      required: true
+
+  - attributes:
+      label: Steps to Reproduce?
+      description: What did you do, step by step?
+      placeholder: |
+        1. Run `task serve`
+        2. Open http://localhost:8000
+        3. ...
+    type: textarea
+    validations:
+      required: true
+
+  - attributes:
+      label: Expected Behavior?
+    type: textarea
+    validations:
+      required: true
+
+  - attributes:
+      label: Actual Behavior?
+    type: textarea
+    validations:
+      required: true
+
+  - attributes:
+      label: Environment?
+      description: Browser, operating system, and Python version.
+      placeholder: "Firefox 140 on macOS 15, Python 3.13"
+    type: textarea
+    validations:
+      required: true
+
+  - attributes:
+      label: Logs or Console Output?
+      description: Terminal output or browser console errors. Automatically formatted as code.
+      render: shell
+    id: logs
+    type: textarea
+
+  - attributes:
+      label: Additional Information?
+      placeholder: |
+        - Related issues or pull requests: #123
+        - Screenshots
+    type: textarea

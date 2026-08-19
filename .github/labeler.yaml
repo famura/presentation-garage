@@ -1,0 +1,29 @@
+"area: backbone":
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/**
+          - .gitignore
+          - .nojekyll
+          - .editorconfig
+          - .pre-commit-config.yaml
+          - scripts/**
+          - Taskfile.yml
+
+"area: garage":
+  - changed-files:
+      - any-glob-to-any-file:
+          - dist/**
+          - garage.json
+          - index.html
+          - presentations/**
+
+"area: skills":
+  - changed-files:
+      - any-glob-to-any-file:
+          - .agents/**
+
+"area: docs":
+  - changed-files:
+      - any-glob-to-any-file:
+          - LICENSE
+          - readme.md

@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Presentation garage" />
+    <title>Presentation Garage</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='92'>🏍️</text></svg>"
+    />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Inter:wght@400;600&display=swap"
+    />
+    <style>
+      /* Inverted demo-revealjs palette: paper background, red secondary, green highlight. */
+      :root {
+        color-scheme: light;
+        --bg: #f4f1de;
+        --panel: rgba(255, 255, 255, 0.55);
+        --line: rgba(44, 44, 44, 0.16);
+        --ink: #2c2c2c;
+        --muted: #6b6b6b;
+        --secondary: #8c3a2f;
+        --accent: #3d5a55;
+      }
+
+      /* Dark mode: same palette, lightness inverted (paper <-> ink, hues lifted to stay readable). */
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        --bg: #21201c;
+        --panel: rgba(244, 241, 222, 0.06);
+        --line: rgba(244, 241, 222, 0.18);
+        --ink: #f4f1de;
+        --muted: #a29e93;
+        --secondary: #e08d78;
+        --accent: #8fbcb2;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        padding: 0 0 64px;
+        color: var(--ink);
+        background: var(--bg);
+        font:
+          16px/1.5 "Inter",
+          ui-sans-serif,
+          system-ui,
+          "Helvetica Neue",
+          Arial,
+          sans-serif;
+      }
+
+      ::selection {
+        background: rgba(61, 90, 85, 0.22);
+        color: var(--ink);
+      }
+
+      header,
+      main {
+        width: min(1200px, calc(100% - 48px));
+        margin: 0 auto;
+      }
+
+      header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 12px 20px;
+        padding: 40px 0 28px;
+      }
+
+      h1 {
+        margin: 0;
+        color: var(--accent);
+        font-family: "Fraunces", Georgia, serif;
+        font-size: 3.2rem;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+      h1 span {
+        color: var(--secondary);
+      }
+      .count {
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+      .sort {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+
+      select,
+      #theme {
+        padding: 6px 10px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        color: var(--ink);
+        background: var(--panel);
+        font: inherit;
+        font-size: 0.85rem;
+      }
+
+      #theme {
+        cursor: pointer;
+      }
+
+      select:focus-visible,
+      #theme:focus-visible {
+        outline: none;
+        border-color: var(--accent);
+        box-shadow: 0 0 0 3px rgba(61, 90, 85, 0.28);
+      }
+
+      .hint {
+        margin: 0 0 24px;
+        color: var(--muted);
+        font-size: 0.85rem;
+      }
+      kbd {
+        padding: 1px 6px;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: var(--panel);
+        font-family: ui-monospace, monospace;
+        font-size: 0.78rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 22px;
+      }
+
+      .card {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-top: 3px solid var(--secondary);
+        border-radius: 12px;
+        background: var(--panel);
+        cursor: pointer;
+        transition:
+          transform 0.15s ease,
+          border-color 0.15s ease;
+      }
+
+      .card:hover,
+      .card:focus {
+        outline: none;
+        transform: translateY(-4px);
+        border-color: var(--accent);
+      }
+      .card:focus {
+        box-shadow: 0 0 0 3px rgba(61, 90, 85, 0.35);
+      }
+
+      .preview {
+        position: relative;
+        aspect-ratio: 16 / 9;
+        overflow: hidden;
+        border-bottom: 1px solid var(--line);
+        background: var(--bg);
+      }
+
+      .preview iframe {
+        position: absolute;
+        inset: 0;
+        width: 200%;
+        height: 200%;
+        border: 0;
+        transform: scale(0.5);
+        transform-origin: top left;
+        pointer-events: none;
+      }
+
+      .body {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding: 18px 20px 20px;
+      }
+      .body h2 {
+        margin: 0;
+        font-family: "Fraunces", Georgia, serif;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+      .body p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+      .meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: var(--secondary);
+        font-size: 0.88rem;
+        font-weight: 600;
+      }
+      .meta a {
+        margin-left: auto;
+        color: var(--secondary);
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .meta a:hover {
+        text-decoration: underline;
+      }
+      .status {
+        grid-column: 1 / -1;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Presentation <span>Garage</span></h1>
+      <span class="count" id="count"></span>
+      <label class="sort"
+        >sort by
+        <select id="sort">
+          <option value="date">date</option>
+          <option value="name">name</option>
+        </select>
+      </label>
+      <button id="theme" type="button" aria-pressed="false">dark mode</button>
+    </header>
+
+    <main>
+      <p class="hint">
+        Navigate with <kbd>&larr;</kbd> <kbd>&uarr;</kbd> <kbd>&darr;</kbd>
+        <kbd>&rarr;</kbd> and <kbd>Enter</kbd>, or click a card.
+      </p>
+      <section class="grid" id="grid" aria-label="Presentations">
+        <p class="status">Loading presentations...</p>
+      </section>
+    </main>
+
+    <script>
+      const grid = document.querySelector("#grid");
+      const count = document.querySelector("#count");
+      const sort = document.querySelector("#sort");
+      const theme = document.querySelector("#theme");
+      let presentations = [];
+
+      function setTheme(dark) {
+        document.documentElement.dataset.theme = dark ? "dark" : "light";
+        theme.textContent = dark ? "light mode" : "dark mode";
+        theme.setAttribute("aria-pressed", String(dark));
+        localStorage.setItem("theme", dark ? "dark" : "light");
+      }
+
+      setTheme(
+        localStorage.getItem("theme")
+          ? localStorage.getItem("theme") === "dark"
+          : matchMedia("(prefers-color-scheme: dark)").matches,
+      );
+      theme.addEventListener("click", () =>
+        setTheme(document.documentElement.dataset.theme !== "dark"),
+      );
+
+      // bundles are never committed, so they can only exist on a locally served garage
+      const servedLocally = ["localhost", "127.0.0.1"].includes(
+        location.hostname,
+      );
+
+      function offlineLink(href) {
+        const download = document.createElement("a");
+        download.href = href;
+        download.download = "";
+        download.textContent = "offline copy";
+        download.addEventListener("click", (event) => event.stopPropagation());
+        return download;
+      }
+
+      function makeCard(presentation) {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.tabIndex = 0;
+        card.addEventListener("click", () => location.assign(presentation.url));
+        card.addEventListener("keydown", (event) => {
+          if (event.key === "Enter") location.assign(presentation.url);
+        });
+
+        const preview = document.createElement("div");
+        preview.className = "preview";
+        const frame = document.createElement("iframe");
+        frame.src = presentation.url;
+        frame.loading = "lazy";
+        frame.tabIndex = -1;
+        frame.setAttribute("aria-hidden", "true");
+        frame.addEventListener("load", () => stripPreviewChrome(frame));
+        preview.append(frame);
+
+        const body = document.createElement("div");
+        body.className = "body";
+        const title = document.createElement("h2");
+        title.textContent = presentation.title;
+        const description = document.createElement("p");
+        description.textContent = presentation.description || "";
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        meta.textContent = presentation.date || "";
+        if (presentation.offline) {
+          meta.append(offlineLink(presentation.offline));
+        } else if (servedLocally) {
+          const bundle = `dist/${presentation.name}.html`;
+          fetch(bundle, { method: "HEAD" }).then((response) => {
+            if (response.ok) meta.append(offlineLink(bundle));
+          });
+        }
+        body.append(title, meta, description);
+
+        card.append(preview, body);
+        return card;
+      }
+
+      // previews are same-origin, so the presentation's own chrome can be hidden from here
+      function stripPreviewChrome(frame) {
+        const style = frame.contentDocument?.createElement("style");
+        if (!style) return;
+        style.textContent = `
+        .controls, .progress, .slide-number, #page-count { display: none !important; }
+        .fragment { opacity: 1 !important; visibility: visible !important; }
+      `;
+        frame.contentDocument.head.append(style);
+      }
+
+      function render() {
+        const sorted = [...presentations].sort((left, right) =>
+          sort.value === "name"
+            ? left.title.localeCompare(right.title)
+            : (right.date || "").localeCompare(left.date || ""),
+        );
+        grid.replaceChildren(...sorted.map(makeCard));
+        count.textContent = `${presentations.length} presentation${presentations.length === 1 ? "" : "s"}`;
+      }
+
+      sort.addEventListener("change", render);
+
+      grid.addEventListener("keydown", (event) => {
+        const cards = [...grid.querySelectorAll(".card")];
+        const current = cards.indexOf(document.activeElement);
+        if (current < 0) return;
+        const columns = cards.filter(
+          (card) => card.offsetTop === cards[0].offsetTop,
+        ).length;
+        const step = {
+          ArrowRight: 1,
+          ArrowLeft: -1,
+          ArrowDown: columns,
+          ArrowUp: -columns,
+        }[event.key];
+        if (!step) return;
+        event.preventDefault();
+        (cards[current + step] || cards[current]).focus();
+      });
+
+      // reveal.js and the PDF viewer both accept {method, args} over postMessage.
+      // slide(), not next(): next() steps through fragments, which the preview already shows all at once,
+      // so the deck looks stuck.
+      let index = 0;
+      setInterval(() => {
+        index = (index + 1) % 5;
+        const command = JSON.stringify({ method: "slide", args: [index, 0] });
+        grid.querySelectorAll("iframe").forEach((frame) => {
+          frame.contentWindow?.postMessage(command, "*");
+        });
+      }, 2000);
+
+      fetch(`garage.json?v=${Date.now()}`, { cache: "no-store" })
+        .then((response) => response.json())
+        .then((manifest) => {
+          presentations = manifest;
+          if (!presentations.length) {
+            grid.replaceChildren(
+              Object.assign(document.createElement("p"), {
+                className: "status",
+                textContent:
+                  "No presentations yet. Add a folder under presentations/ and run: task manifest",
+              }),
+            );
+            return;
+          }
+          render();
+          grid.querySelector(".card").focus();
+        })
+        .catch(() => {
+          grid.replaceChildren(
+            Object.assign(document.createElement("p"), {
+              className: "status",
+              textContent:
+                "Could not load garage.json. Serve this folder over HTTP: task serve",
+            }),
+          );
+        });
+    </script>
+  </body>
+</html>
