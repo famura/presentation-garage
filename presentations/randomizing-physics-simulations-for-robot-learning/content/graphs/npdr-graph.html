@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+
+<!-- =============================================================================================================== -->
+
+<head>
+  <!-- Link custom css files (not necessary?!) -->
+  <!-- <link rel="stylesheet" href="dist/reveal.css" /> -->
+  <!-- <link rel="stylesheet" href="dist/theme/famura.css" id="theme" /> -->
+
+  <style type="text/css">
+    .node {
+      color: #f2f2f2;
+      fill: azure;
+      font: inherit;
+      font-weight: lighter;
+    }
+    .link {
+      stroke: rgb(246, 178, 107);
+      stroke-opacity: 1;
+      stroke-width: 4px;
+    }
+    .dashed {
+      stroke-dasharray: 6, 4;
+    }
+    .famurabrightred {
+      stroke: #ee4422;
+    }
+    .famurabrightgreen {
+      stroke: #bdecb6;
+    }
+    .famurabrightblue {
+      stroke: #47abd3;
+    }
+    .bolder {
+      font-weight: bolder;
+    }
+  </style>
+</head>
+
+<!-- =============================================================================================================== -->
+
+<body>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js"></script>
+  <script type="text/javascript" src="../../slide-graph.js"></script>
+  <!-- THIS PATH MUST BE SET: relative to this file, or relative to root ('/slide-graph.js') -->
+
+  <script>
+    var width = 960,
+      height = 650, // reveal.js slide width is 960px and slide height is 700px; leave some space for the heading
+      baselineSkip = 30 // to be used in the associated <NAME>-graph.json file
+
+    // NOTE:
+    // Three ways to provide graph data:
+    // 1. In index.html, add `data-graph="filename.json"` to the slide including this file
+    // 2. Load a json file directly here:
+    //    d3.json("spota-graph.json").then(function(data) {
+    //      loadGraph(data);
+    //    });
+    // 3. Construct the data here and pass it to `loadGraph`:
+    //     var data = { nodes: [
+    //                     {id: "test1", opacity: 1, fx: 200, fy: 160, labels: [{text: "Test1"}]},
+    //                     {id: "test2", opacity: 1, fx: 400, fy: 200, labels: [{text: "Test2"}]}
+    //                  ],
+    //                  links: [
+    //                     {source: "test1", target: "test2", type: "A"},
+    //                     {source: "test2", target: "test1", type: "B"}
+    //                  ]
+    //                 };
+    //     loadGraph(data);
+
+    data = {
+      nodes: [
+        {
+          id: "define_prior",
+          opacity: 1,
+          fx: 135,
+          fy: 50,
+          labels: [{text: "define prior domain"}, {text: "parameter distribution", offset: "0, baselineSkip"}, {math: "p(\\xi)", offset: "25, baselineSkip + 16"}],
+        },
+        {
+          id: "train_init",
+          opacity: 0,
+          fx: 145,
+          fy: 250,
+          labels: [{text: "train initial policy in"}, {text: "simulations from prior", offset: "0, baselineSkip"}, {math: "\\theta^{\\star}", offset: "30, baselineSkip + 14"}],
+        },
+        {
+          id: "execute_policy",
+          opacity: 0,
+          fx: 160,
+          fy: 400,
+          labels: [
+            {text: "execute policy", class: "bolder"},
+            {text: "in target domain", offset: "0, baselineSkip", class: "bolder"},
+            {math: "\\tau_{1:H}^{\\textsf{real}}", offset: "-30, baselineSkip + 12"},
+          ],
+        },
+        {
+          id: "compute_obs",
+          opacity: 0,
+          fx: 650,
+          fy: 540,
+          labels: [{text: "compute observations"}, {text: "(summary statistics)", offset: "0, baselineSkip"}, {math: "x^{\\textsf{real}}", offset: "-20, baselineSkip + 14"}],
+        },
+        {
+          id: "sample_domparam",
+          opacity: 0,
+          fx: 860,
+          fy: 370,
+          labels: [
+            {text: "condition and"},
+            {text: "sample domain", offset: "0, baselineSkip"},
+            {text: "parameters", offset: "0, 2*baselineSkip"},
+            {math: "\\xi_{1:N}", offset: "-20, 2*baselineSkip + 10"},
+          ],
+        },
+        {
+          id: "simulate_rollouts",
+          opacity: 0,
+          fx: 880,
+          fy: 190,
+          labels: [{text: "simulate"}, {text: "rollouts", offset: "0, baselineSkip"}, {math: "x_{1:N}^{\\textsf{sim}}", offset: "-10, baselineSkip + 16"}],
+        },
+        {
+          id: "inference",
+          opacity: 0,
+          fx: 610,
+          fy: 50,
+          labels: [{text: "optimize density"}, {text: "estimator", offset: "0, baselineSkip"}, {math: "\\phi^{\\star}", offset: "-10, baselineSkip + 10"}],
+        },
+        {
+          id: "obtain_posterior",
+          opacity: 0,
+          fx: 490,
+          fy: 205,
+          labels: [{text: "obtain posterior"}, {text: "from density estimator", offset: "0, baselineSkip"}, {math: "\\hat{p}_{\\phi}(\\xi | x^{\\textsf{real}})", offset: "-130, baselineSkip + 10"}],
+        },
+        {
+          id: "train_iter",
+          opacity: 0,
+          fx: 480,
+          fy: 360,
+          labels: [
+            {text: "train next"},
+            {text: "policy using", offset: "0, baselineSkip"},
+            {text: "posterior samples", offset: "0, 2*baselineSkip"},
+            {math: "\\theta^{\\star}", offset: "-5, 2*baselineSkip + 14"},
+          ],
+        },
+        {
+          id: "done",
+          opacity: 0,
+          fx: 30,
+          fy: 580,
+          // class: "green",
+          labels: [{text: "done"}],
+        },
+      ],
+      links: [
+        {source: "define_prior", target: "train_init", waypoints: [[145, 125]]},
+        {source: "train_init", target: "execute_policy", waypoints: [[160, 315]]},
+        {source: "execute_policy", target: "compute_obs", waypoints: [[350, 520]]},
+        {source: "compute_obs", target: "sample_domparam", waypoints: [[690, 440]]},
+        {source: "sample_domparam", target: "simulate_rollouts", class: "famurabrightblue", waypoints: [[825, 285]]},
+        {source: "simulate_rollouts", target: "inference", class: "famurabrightblue", waypoints: [[820, 100]]},
+        {source: "inference", target: "obtain_posterior", class: "famurabrightblue", waypoints: [[500, 110]]},
+        {source: "obtain_posterior", target: "sample_domparam", class: "famurabrightblue", waypoints: [[630, 330]]},
+        {source: "obtain_posterior", target: "train_iter", waypoints: [[540, 280]]},
+        {source: "train_iter", target: "execute_policy", waypoints: [[320, 340]]},
+        {source: "execute_policy", target: "done", class: "famurabrightgreen", waypoints: [[50, 500]]},
+      ],
+    }
+    loadGraph(data)
+
+    // NOTE:
+    // Slide transitions are defined here. Each transition is actually just a small lambda function. For both forward and
+    // backward steps through the presentation to work, you need to define a function both for each transition AND one
+    // to un-do each transition (but the backward steps ARE optional if you don't care).
+
+    // NOTE:
+    // When you move INTO this slide by going BACKWARDS through the presentation, the LAST `transitionForward()`
+    // will be invoked. This gives you the chance to build the final slide state and keep everything nice and continuous.
+    // This is why the last transition below enables ALL nodes instead of just the last one. Here I have provided a small
+    // function which will toggle the visibility of a node, using its index in data.nodes[] above. Arrow visibility is
+    // automatically set based on whether the nodes the arrow connects are visible. e.g. `showNode(2, true)` will make
+    // the "evaluate in reference domains" node visible along with any arrows that connect this node to another visible node.
+
+    _transitions = [
+      {
+        transitionForward: () => {
+          showNodes([1], true)
+        },
+        transitionBackward: () => showNodes([1], false),
+        index: 0,
+      },
+      {
+        transitionForward: () => showNode(2, true),
+        transitionBackward: () => showNode(2, false),
+      },
+      {
+        transitionForward: () => showNode(3, true),
+        transitionBackward: () => showNode(3, false),
+      },
+      {
+        transitionForward: () => showNode(4, true),
+        transitionBackward: () => showNode(4, false),
+      },
+      {
+        transitionForward: () => showNode(5, true),
+        transitionBackward: () => showNode(5, false),
+      },
+      {
+        transitionForward: () => showNode(6, true),
+        transitionBackward: () => showNode(6, false),
+      },
+      {
+        transitionForward: () => showNode(7, true),
+        transitionBackward: () => showNode(7, false),
+      },
+      {
+        transitionForward: () => showNode(8, true),
+        transitionBackward: () => showNode(8, false),
+      },
+      {
+        transitionForward: () => showNodes([0, 1], false, 100),
+        transitionBackward: () => showNodes([1, 0], true, 100),
+      },
+      {
+        transitionForward: () => showNode(9, true),
+        transitionBackward: () => showNode(9, false),
+      },
+      {
+        transitionForward: () => {
+          showNodes([1, 0], false, 100) // ensure first 2 nodes are hidden
+          showNodes([9, 8, 7, 6, 5, 4, 3, 2], true, 100) // ensure remaining nodes are visible
+          d3.select(".link").classed("dashed", true).transition().duration(5000).ease(d3.easeBackOut).attr("stroke-dashoffset", -150)
+        },
+        transitionBackward: () => {
+          d3.select(".link").classed("dashed", false).transition().duration(5000).ease(d3.easeBackOut).attr("stroke-dashoffset", 0)
+        },
+      },
+    ]
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key == "o") {
+        showAllNodes(true)
+      }
+    })
+  </script>
+
+  <!-- ============================================================================================================= -->
+</body>

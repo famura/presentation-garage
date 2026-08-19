@@ -1,0 +1,63 @@
+.one-unit-box {
+    height: 50px;
+    width: 50px;
+}
+
+.left-rounded {
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.right-rounded {
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.row-vector-box {
+    width: 120px;
+    height: 50px;
+    margin: 5px;
+    border-radius: 5px;
+}
+
+.row-vector-box-invisible {
+    width: 0px;
+    height: 0px;
+    margin: 0px;
+    border: none;
+    background: transparent;
+}
+
+.embedded-feature-part {
+    width: 65px; /* at bit larger than half of row-vector-box */
+    height: 30px; /* at bit larger than half of row-vector-box */
+}
+
+.highlight-box {
+    display: table-row; /* ensure the div does not take full width */
+    border: 1px solid var(--bright-orange); /* thin border */
+}
+
+.bar-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 30px;
+    justify-content: center; 
+}
+
+.bar-pair {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bar {
+    width: 30px;
+    background-color: #fff;
+}
+
+.small-bar {
+    width: 30px;
+    height: 3px;
+    background-color: #9b6dbd;
+}

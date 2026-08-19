@@ -1,0 +1,956 @@
+/*********************************************
+ * Custom theme for reveal.js
+ * Author: Fabio Muratore http://github.com/famura
+ *
+ * Based on the blood theme from reveal.js
+ * Author: Veeti Haapsamo  http://github.com/Walther
+ *********************************************/
+
+@import url(https://fonts.googleapis.com/css?family=Ubuntu:300,700,300italic,700italic);
+
+/*********************************************
+ * GLOBAL STYLES
+ *********************************************/
+:root {
+  --font: Ubuntu, sans-serif;
+  --font-size: 34px; /* 34px without commenting in width: "100%" in index.html */
+  --block-margin: 20px;
+  --heading-margin: 0 0 20px 0;
+  --heading-font: Ubuntu, sans-serif;
+  --title-text-transform: uppercase;
+  --heading-line-height: 1.2;
+  --heading-letter-spacing: normal;
+  --heading-text-transform: normal;
+  --heading-text-shadow: none; /* 2px 2px 2px #222 */
+  --heading-font-weight: normal;
+  --heading1-text-shadow: none;
+  /* --heading1-text-shadow: 0 1px 0 #ccc, 0 2px 0 #c9c9c9, 0 3px 0 #bbb, 0 4px 0 #b9b9b9, 0 5px 0 #aaa, 0 6px 1px rgba(0, 0, 0, 0.1), 0 0 5px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.3), 0 3px 5px rgba(0, 0, 0, 0.2), 0 5px 10px rgba(0, 0, 0, 0.25), 0 20px 20px rgba(0, 0, 0, 0.15); */
+  --heading1-size: 2.85em;
+  --heading2-size: 2em;
+  --heading3-size: 1.5em;
+  --heading4-size: 1.17em;
+  --heading5-size: 1em;
+  --heading6-size: 0.83em;
+  --code-font: monospace;
+  --dark-background-color: #222;
+  --dark-text-color: #f2f2f2;
+  --bright-background-color: #f2f2f2;
+  --bright-text-color: #222;
+  --chapter-background-color: #d7d7d7;
+  --title-color: #f6b26b; /* #ff5500 */
+  --heading-color: #f6b26b;
+  --link-color: #a23;
+  --link-color-hover: #dd5566;
+  --selection-background-color: #a23;
+  --selection-color: #fff;
+  --author-color: #47abd3;
+  --bright-orange: #f6b26b;
+  --bright-blue: #47abd3;
+  --bright-green: #bdecb6;
+  --bright-grey: #b4b4b4;
+  --bright-red: #ee4422;
+  --blood-red: #a23;
+  --red: #cc3a1d;
+  --purple: #9b6dbd;
+  --bone: #e0d6ce;
+  --dark-grey: #2c3437;
+  --dark-purple: #854aac;
+  --dark-blue: #3333b3;
+  /* seaborn pastel palette, copied from https://seaborn.pydata.org/generated/seaborn.color_palette.html */
+  --sns-color-1: #a1c9f4;
+  --sns-color-2: #ffb482;
+  --sns-color-3: #8de5a1;
+  --sns-color-4: #ff9f9b;
+  --sns-color-5: #d0bbff;
+  --sns-color-6: #debb9b;
+  --sns-color-7: #fab0e4;
+  --sns-color-8: #cfcfcf;
+  --sns-color-9: #fffea3;
+  --sns-color-10: #b9f2f0;
+}
+
+.reveal-viewport {
+  /* background: var(--bright-background-color); */
+  background: var(--dark-background-color);
+  /* background: var(--bright-background-color); */
+  background-color: var(--dark-background-color);
+}
+
+.reveal {
+  font-family: var(--font);
+  font-size: var(--font-size);
+  font-weight: normal;
+  /* color: var(--bright-text-color); */
+  color: var(--dark-text-color);
+}
+
+.reveal ::selection,
+.reveal ::-moz-selection {
+  color: var(--selection-color);
+  background: var(--selection-background-color);
+  text-shadow: none;
+}
+
+.reveal .slides section,
+.reveal .slides section > section {
+  line-height: 1.3;
+  font-weight: inherit;
+}
+
+section.has-light-background,
+section.has-light-background h1,
+section.has-light-background h2,
+section.has-light-background h3,
+section.has-light-background h4,
+section.has-light-background h5,
+section.has-light-background h6 {
+  color: var(--dark-background-color);
+}
+
+/*********************************************
+ * Title
+ *********************************************/
+.reveal .title {
+  color: var(--title-color);
+  font-family: var(--heading-font);
+  text-transform: var(--title-text-transform);
+  text-shadow: var(--heading-text-shadow);
+  word-wrap: break-word;
+}
+
+/*********************************************
+* Header
+*********************************************/
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+  margin: var(--heading-margin);
+  color: var(--heading-color);
+  font-family: var(--heading-font);
+  font-weight: var(--heading-font-weight);
+  line-height: var(--heading-line-height);
+  letter-spacing: var(--heading-letter-spacing);
+  text-transform: var(--heading-text-transform);
+  text-shadow: var(--heading-text-shadow);
+  word-wrap: break-word;
+}
+
+/* For default HTML5 header sizes see https://html.spec.whatwg.org/multipage/rendering.html#sections-and-headings */
+/* Here, I shifted them by one, and extrapolated h1. */
+.reveal h1 {
+  font-size: var(--heading1-size);
+}
+.reveal h2 {
+  font-size: var(--heading2-size);
+}
+.reveal h3 {
+  font-size: var(--heading3-size);
+}
+.reveal h4 {
+  font-size: var(--heading4-size);
+}
+.reveal h5 {
+  font-size: var(--heading5-size);
+}
+.reveal h6 {
+  font-size: var(--heading6-size);
+}
+
+.reveal h1 {
+  text-shadow: var(--heading1-text-shadow);
+}
+
+/* Remove trailing margins after titles */
+.reveal h1:last-child,
+.reveal h2:last-child,
+.reveal h3:last-child,
+.reveal h4:last-child,
+.reveal h5:last-child,
+.reveal h6:last-child {
+  margin-bottom: 0;
+}
+
+/*********************************************
+* OTHER
+*********************************************/
+.reveal p {
+  margin: var(--block-margin);
+  line-height: 1.3;
+}
+
+/* Override MathJax 2 display math margin (default is 1em = 34px, should be --block-margin) */
+.reveal .MathJax_Display {
+  margin: var(--block-margin) 0 !important;
+}
+
+/* Ensure certain elements are never larger than the slide itself */
+.reveal img,
+.reveal video,
+.reveal iframe {
+  max-width: 95%;
+  max-height: 95%;
+}
+
+.reveal strong,
+.reveal b {
+  font-weight: bold;
+}
+
+.reveal em {
+  font-style: italic;
+}
+
+.reveal ol,
+.reveal dl,
+.reveal ul {
+  display: inline-block;
+  text-align: left;
+  margin: 0 0 0 1em;
+}
+
+.reveal ol {
+  list-style-type: decimal;
+}
+
+.reveal ul {
+  list-style-type: disc;
+}
+
+.reveal ul ul {
+  list-style-type: square;
+}
+
+.reveal ul ul ul {
+  list-style-type: circle;
+}
+
+.reveal ul ul,
+.reveal ul ol,
+.reveal ol ol,
+.reveal ol ul {
+  display: block;
+  margin-left: 30px;
+}
+
+/*********************************************
+ * In-Line Descriptive List
+ * from https://stackoverflow.com/questions/1713048/how-to-style-dt-and-dd-so-they-are-on-the-same-line
+ *********************************************/
+.reveal dl {
+  display: grid;
+  grid-template-columns: max-content auto;
+}
+.reveal dt {
+  grid-column-start: 1;
+  font-weight: bold;
+}
+.reveal dd {
+  grid-column-start: 2;
+  margin-bottom: 10px; /*<p> has a top and bottom margin of 10px*/
+  margin-left: 30px;
+}
+
+.reveal blockquote {
+  display: block;
+  position: relative;
+  width: 70%;
+  margin: var(--block-margin) auto;
+  padding: 5px;
+  font-style: italic;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.2);
+}
+
+.reveal blockquote p:first-child,
+.reveal blockquote p:last-child {
+  display: inline-block;
+}
+
+.reveal q {
+  font-style: italic;
+}
+
+.reveal pre {
+  display: block;
+  position: relative;
+  width: 90%;
+  margin: var(--block-margin) auto;
+  text-align: left;
+  font-size: 0.55em;
+  font-family: var(--code-font);
+  line-height: 1.2em;
+  word-wrap: break-word;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+}
+
+.reveal code {
+  font-family: var(--r-code-font);
+  text-transform: none;
+  tab-size: 2;
+}
+
+.reveal pre code {
+  display: block;
+  padding: 5px;
+  overflow: auto;
+  max-height: 400px;
+  word-wrap: normal;
+}
+
+.reveal .code-wrapper {
+  white-space: normal;
+}
+
+.reveal .code-wrapper code {
+  white-space: pre;
+}
+
+.reveal sup {
+  vertical-align: super;
+  font-size: smaller;
+}
+
+.reveal sub {
+  vertical-align: sub;
+  font-size: smaller;
+}
+
+.reveal small {
+  display: inline-block;
+  font-size: 0.6em;
+  line-height: 1.2em;
+  vertical-align: top;
+}
+
+.reveal small * {
+  vertical-align: top;
+}
+
+.reveal img {
+  margin: var(--block-margin) 0;
+}
+
+/*********************************************
+* Tables
+*********************************************/
+.reveal table {
+  margin: auto;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+.reveal table.compact-table td,
+.reveal table.compact-table th {
+  padding-top: 0.05em;
+  padding-bottom: 0.05em;
+}
+
+.reveal .numeric td {
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+.reveal table th {
+  font-weight: bold;
+}
+
+.reveal table th,
+.reveal table td {
+  text-align: left;
+  padding: 0.2em 0.5em 0.2em 0.5em;
+}
+
+.reveal table th[align="center"],
+.reveal table td[align="center"] {
+  text-align: center;
+}
+
+.reveal table th[align="right"],
+.reveal table td[align="right"] {
+  text-align: right;
+}
+
+.reveal table tbody tr:last-child th,
+.reveal table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/*********************************************
+* Links
+*********************************************/
+.reveal a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.reveal a:hover {
+  color: var(--link-color-hover);
+  text-shadow: none;
+  border: none;
+}
+
+.reveal .roll span:after {
+  color: #fff;
+  background: var(--link-color-dark);
+}
+
+/*********************************************
+* Frame Helper
+*********************************************/
+.reveal .r-frame {
+  border: 4px solid var(--bright-text-color);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+}
+
+.reveal a .r-frame {
+  transition: all 0.15s linear;
+}
+
+.reveal a:hover .r-frame {
+  border-color: var(--link-color);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.55);
+}
+
+/*********************************************
+* Navigation Controls
+*********************************************/
+.reveal .controls {
+  background: rgba(0, 0, 0, 0); /* transparent */
+  color: var(--link-color);
+}
+.reveal .controls button {
+  color: var(--link-color);
+}
+
+/*********************************************
+* Progress Bar
+*********************************************/
+.reveal .progress {
+  background: rgba(0, 0, 0, 0); /* transparent */
+  color: var(--link-color);
+  height: 4px; /*original: 3px*/
+}
+
+/*********************************************
+* Print Background
+*********************************************/
+@media print {
+  .backgrounds {
+    background-color: var(--darkbackground-color);
+  }
+}
+
+.reveal p {
+  font-weight: 300;
+  text-shadow: none; /* 1px 1px #222 */
+}
+
+section.has-light-background p,
+section.has-light-background h1,
+section.has-light-background h2,
+section.has-light-background h3,
+section.has-light-background h4,
+section.has-light-background h5,
+section.has-light-background h6 {
+  text-shadow: none;
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3,
+.reveal h4,
+.reveal h5,
+.reveal h6 {
+  font-weight: 700;
+}
+
+.reveal p code {
+  background-color: var(--dark-background-color);
+  display: inline-block;
+  border-radius: 7px;
+}
+
+.reveal small code {
+  vertical-align: baseline;
+}
+
+/*********************************************
+ * Slide Number
+ * see ./css/reveal.scss
+ *********************************************/
+.reveal .slide-number {
+  font-size: 3.5vh;
+  right: 12px;
+  bottom: 12px;
+  color: var(--link-color);
+  background: rgba(0, 0, 0, 0); /* transparent */
+}
+.reveal .slide-number-delimiter {
+  margin: 0 1px;
+}
+
+/*********************************************
+ * Basic Highlighting
+ *********************************************/
+
+.highlight-orange {
+  color: var(--title-color);
+}
+
+.highlight-red {
+  color: var(--bright-red);
+}
+
+.highlight-blue {
+  color: var(--bright-blue);
+}
+
+.highlight-purple {
+  color: var(--purple);
+}
+
+/*********************************************
+ * Fragment
+ *********************************************/
+.reveal .slides section .fragment.step-fade-in-then-out {
+  opacity: 0;
+  display: none;
+}
+.reveal .slides section .fragment.step-fade-in-then-out.current-fragment {
+  opacity: 1;
+  display: inline;
+}
+
+.reveal .slides section .fragment.highlight-green {
+  opacity: 1;
+  visibility: inherit;
+}
+.reveal .slides .highlight-green, /* independent of fraction*/
+.reveal .slides section .fragment.highlight-green.visible {
+  /* must be combined with fraction*/
+  color: var(--bright-green);
+}
+.reveal .slides section .fragment.highlight-blue {
+  opacity: 1;
+  visibility: inherit;
+}
+.reveal .slides .highlight-blue, /* independent of fraction*/
+.reveal .slides section .fragment.highlight-blue.visible {
+  /* must be combined with fraction*/
+  color: var(--bright-blue);
+}
+
+.reveal .slides section .fragment.highlight-grey {
+  opacity: 1;
+  visibility: inherit;
+}
+.reveal .slides .highlight-grey, /* independent of fraction*/
+.reveal .slides section .fragment.highlight-grey.visible {
+  color: var(--bright-grey);
+}
+
+/*********************************************
+ * Chapter Break Slides
+ * usage: <section data-background-color="var(--chapter-background-color)" data-footer-class="newchap" class="newchap">
+ * note: reveal.js will notice that you selected a light background and thus change the colors ect
+         Do NOT set background or background-color since this leads to slow transitions with different speeds.
+ *********************************************/
+.reveal .newchap {
+  color: var(--dark-text-color);
+}
+
+.reveal .newchap h1,
+.reveal .newchap h2,
+.reveal .newchap h3,
+.reveal .newchap h4,
+.reveal .newchap h5,
+.reveal .newchap h6 {
+  color: var(--link-color);
+}
+
+/*********************************************
+ * References
+ *********************************************/
+.reveal .references {
+  /* float: inherit; */
+  clear: both;
+  margin-top: 5vh;
+  margin-bottom: 2vh;
+  vertical-align: bottom !important;
+  font-size: 20px;
+  text-align: left;
+}
+
+.reveal .references p {
+  margin: 10px 0;
+}
+
+.reveal .references-in-one-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+}
+
+.reveal .references-in-one-row-left-col {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+  margin-right: 20px;
+}
+
+.reveal .references-in-one-row-right-col {
+  /*put item in <span>*/
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.reveal .authorname {
+  color: var(--author-color);
+}
+
+.reveal .papertitle {
+  font-size: 80%;
+  font-style: italic;
+}
+
+/*********************************************
+ * Note / Thought
+ *********************************************/
+.reveal p.note-below {
+  color: var(--dark-purple);
+  font-size: 80%;
+  margin-top: 0px;
+  margin-bottom: -20px; /* compensate for the top: -20px */
+  position: relative;
+  top: -20px; /* the margin of a p-element */
+}
+
+/*********************************************
+ * Summary Slide, Affecting Lists and More
+ *********************************************/
+.reveal .paper-summary {
+  list-style-type: none; /* remove default list styling */
+}
+
+.reveal .paper-summary li {
+  margin-bottom: 10px; /* add some space between list items */
+}
+
+.reveal .paper-summary .goal {
+  font-weight: bold;
+  color: var(--sns-color-1);
+}
+
+.reveal .paper-summary .inspiration {
+  font-weight: bold;
+  color: var(--sns-color-7);
+}
+
+.reveal .paper-summary .method {
+  font-weight: bold;
+  color: var(--sns-color-3);
+}
+
+.reveal .paper-summary .claim {
+  font-weight: bold;
+  color: var(--sns-color-9);
+}
+
+/*********************************************
+ * Multiple Column Tables
+ *********************************************/
+.reveal .column2 {
+  float: left;
+  width: 50%;
+}
+
+.reveal .column3 {
+  float: left;
+  width: 33.33%;
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+/*********************************************
+ * Global Center Class
+ *********************************************/
+.center {
+  margin: auto;
+}
+
+/*********************************************
+ * Arranging
+ * from https://css-tricks.com/snippets/css/a-guide-to-flexbox/
+ *********************************************/
+.reveal .flex-container-row {
+  display: flex; /* first create a flex layout context */
+  flex-flow: row nowrap; /* define the flow direction and if we allow the items to wrap */
+  align-items: center; /* vertically alignment */
+  justify-content: space-around; /* define how is distributed the remaining space */
+}
+
+.reveal .flex-container-row-begin {
+  display: flex; /* first create a flex layout context */
+  flex-flow: row nowrap; /* define the flow direction and if we allow the items to wrap */
+  align-items: center; /* vertically alignment */
+  justify-content: flex-end; /* define how is distributed the remaining space */
+}
+
+.reveal .flex-container-row-end {
+  display: flex; /* first create a flex layout context */
+  flex-flow: row nowrap; /* define the flow direction and if we allow the items to wrap */
+  align-items: center; /* vertically alignment */
+  justify-content: flex-end; /* define how is distributed the remaining space */
+}
+
+.reveal .flex-container-row-center {
+  display: flex; /* first create a flex layout context */
+  flex-flow: row nowrap; /* define the flow direction and if we allow the items to wrap */
+  align-items: center; /* vertically alignment */
+  justify-content: center; /* define how is distributed the remaining space */
+}
+
+.reveal .flex-container-col {
+  display: flex; /* first create a flex layout context */
+  flex-flow: column nowrap; /* define the flow direction and if we allow the items to wrap */
+  align-items: center; /* vertically alignment */
+  justify-content: space-around; /* define how is distributed the remaining space */
+}
+/* flex-basis: 20% sets the last column's with to 20% of the parent */
+
+.reveal .box {
+  background-color: #444444;
+  padding: 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.reveal .margin-col {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+/*********************************************
+ * Container holding the image and the text
+ * from https://www.w3schools.com/howto/howto_css_image_text.asp
+ *********************************************/
+.reveal .captioned {
+  position: relative;
+}
+
+/* if image is in a captioned <div>*/
+.reveal .captioned img {
+  margin: 0px 0;
+}
+
+.reveal .inner-bottom-left-caption {
+  position: absolute;
+  bottom: 8px;
+  left: 16px;
+  font-size: 22px;
+  text-align: left;
+}
+
+.reveal .inner-bottom-right-caption {
+  position: absolute;
+  bottom: 8px;
+  right: 16px;
+  font-size: 22px;
+  text-align: right;
+}
+
+.reveal .inner-top-left-caption {
+  position: absolute;
+  top: 8px;
+  left: 16px;
+  font-size: 22px;
+  text-align: left;
+}
+
+.reveal .inner-top-center-caption {
+  position: relative;
+  top: 8px;
+  font-size: 22px;
+  text-align: center;
+}
+
+.reveal .inner-top-right-caption {
+  position: absolute;
+  top: 8px;
+  right: 16px;
+  font-size: 22px;
+  text-align: right;
+}
+
+.reveal .inner-center-caption {
+  position: absolute;
+  font-size: 22px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.reveal .outer-top-left-caption {
+  position: absolute;
+  top: -32px;
+  left: 16px;
+  font-size: 22px;
+  text-align: left;
+}
+
+.reveal .outer-top-center-caption {
+  position: relative; /* put this caption div before the div-to-be-captioned because it is relative*/
+  top: -2px;
+  font-size: 22px;
+  text-align: center;
+}
+
+.reveal .outer-top-right-caption {
+  position: absolute;
+  top: -32px;
+  right: 16px;
+  font-size: 22px;
+  text-align: right;
+}
+
+.reveal .outer-bottom-center-caption {
+  position: relative; /* put this caption div after the div-to-be-captioned because it is relative*/
+  top: -6px;
+  font-size: 22px;
+  text-align: center;
+}
+
+.reveal .outer-bottom-left-caption {
+  position: relative; /* put this caption div after the div-to-be-captioned because it is relative*/
+  top: -6px;
+  left: 16px;
+  font-size: 22px;
+  text-align: left;
+}
+
+.reveal .outer-bottom-right-caption {
+  position: relative; /* put this caption div after the div-to-be-captioned because it is relative*/
+  top: -6px;
+  right: 16px;
+  font-size: 22px;
+  text-align: right;
+}
+.one-unit-box {
+  height: 50px;
+  width: 50px;
+}
+
+.left-rounded {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.right-rounded {
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.row-vector-box {
+  width: 120px;
+  height: 50px;
+  margin: 5px;
+  border-radius: 5px;
+}
+
+.row-vector-box-invisible {
+  width: 0px;
+  height: 0px;
+  margin: 0px;
+  border: none;
+  background: transparent;
+}
+
+.embedded-feature-part {
+  width: 65px; /* at bit larger than half of row-vector-box */
+  height: 30px; /* at bit larger than half of row-vector-box */
+}
+
+.highlight-box {
+  display: table-row; /* ensure the div does not take full width */
+  border: 1px solid var(--bright-orange); /* thin border */
+}
+
+.bar-container {
+  display: flex;
+  align-items: flex-end;
+  gap: 30px;
+  justify-content: center;
+}
+
+.bar-pair {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bar {
+  width: 30px;
+  background-color: #fff;
+}
+
+.small-bar {
+  width: 30px;
+  height: 3px;
+  background-color: #9b6dbd;
+}
+
+/*********************************************
+ * Footer (replaces the header-footer plugin)
+ *********************************************/
+.deck-footer {
+  position: fixed;
+  bottom: 12px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-family: var(--font);
+  font-size: 22px;
+  color: var(--bright-grey);
+  z-index: 10;
+}
+
+.reveal-viewport.no-slide-footer .deck-footer {
+  display: none;
+}
+
+/*********************************************
+ * Implementation validation diagram (inline SVG)
+ *********************************************/
+.flow-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  border: 2px solid var(--bright-orange);
+  border-radius: 8px;
+  background-color: var(--dark-background-color);
+  color: var(--dark-text-color);
+  text-align: center;
+  box-sizing: border-box;
+  padding: 10px;
+  font-size: 24px;
+}
+
+.flow-line {
+  stroke: var(--bright-green);
+  stroke-width: 3;
+  fill: none;
+}

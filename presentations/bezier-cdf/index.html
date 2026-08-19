@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+	<!-- Note: for PDF export, see https://revealjs.com/pdf-export/ and https://github.com/astefanutti/decktape
+   E.g., open file:///home/muf2rng/Software/famura/Present/index.html?print-pdf#/ in Chromium -->
+	<head>
+		<!-- Set basic information -->
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+		<!-- Presentation-specific information -->
+		<meta name="author" content="Dr. Fabio Muratore" />
+		<meta name="description" content="Bézier CDF" />
+		<meta name="date" content="2026-04-23" />
+		<title>Bezier CDF</title>
+
+		<!-- Load a specific math font for MathJax (load this before reveal) -->
+		<!-- <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      "HTML-CSS" : {
+        availableFonts : ["TeX"],
+        preferredFont : "TeX",
+        webFont : "TeX",
+        imageFont : null
+      }
+    });
+  </script> -->
+
+		<!-- Core CSS files (reveal.js from CDN, pinned to the version this presentation was built with) -->
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.0.5/dist/reset.css" />
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.0.5/dist/reveal.css" />
+
+		<!-- Theme used for syntax highlighted code -->
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/reveal.js@5.0.5/plugin/highlight/monokai.css"
+			id="highlight-theme"
+		/>
+
+		<!-- Diagrams plugin, usually located at reveal.js/plugin/ but here they have been moved to third_party/ -->
+		<link rel="stylesheet" href="third_party/diagram/revealjs-diagram.css" />
+
+		<!-- Custom theme -->
+		<link rel="stylesheet" type="text/css" href="themes/famura.css" id="theme" />
+		<link rel="stylesheet" type="text/css" href="themes/shapes.css" />
+
+		<!-- Tab icon -->
+		<link rel="icon" href="content/logos/mechanical_arm.png" />
+	</head>
+
+	<!-- ============================================================================================================= -->
+
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<!-- ======================================================================================================= -->
+
+				<section data-state="no-slide-footer">
+					<h1 class="title">Parametrizing a CDF like a French Automotive Engineer from the 60s</h1>
+				</section>
+
+				<! --------------------------------------------------------------------------------------------------------- -->
+
+				<section>
+					<h3>Describe a probability distribution</h3>
+					<div class="r-stack">
+						<object
+							type="image/svg+xml"
+							data="content/images/cdf_empty.svg"
+							class="full-svg fragment"
+							style="width: auto; height: 25vh; border-radius: 15px"
+						></object>
+						<object
+							type="image/svg+xml"
+							data="content/images/cdf_filled.svg"
+							class="full-svg fragment"
+							style="width: auto; height: 25vh; border-radius: 15px"
+						></object>
+					</div>
+				</section>
+
+				<section>
+					<h3 style="width: 108%; transform: translateX(-4%)">Every distribution can be defined by a CDF</h3>
+					<p>There are a few <span class="highlight-blue">constraints</span> to the CDF $F(X)$:</p>
+					<ul>
+						<li>Monotone and non-decreasing</li>
+						<li>$0 \leq F(x) \leq 1 \quad \forall x \in \text{domain}(X)$</li>
+						<li>$\lim_{x \to -\infty} F(x) = 0$ and $\lim_{x \to +\infty} F(x) = 1$</li>
+					</ul>
+				</section>
+
+				<! --------------------------------------------------------------------------------------------------------- -->
+
+				<section>
+					<h3>Did you ever use Inkscape?</h3>
+					<div class="flex-container-row fragment">
+						<img
+							src="content/images/inkscape.png"
+							style="width: 400px; height: auto; border-radius: 20px"
+						/>
+						<div class="column2">
+							<p>It has a very handy drawing tool for Bézier curves</p>
+							<p>
+								These Bézier curves are a special type of polynomial which can be constrained to a
+								bounding box
+							</p>
+						</div>
+					</div>
+				</section>
+
+				<section>
+					<h3>Definition of a Bézier curve</h3>
+					<p>
+						A <span class="highlight-blue">Bézier curve of degree $n$</span> is defined by
+						<span class="highlight-blue">$n+1$ control points</span> $P_i$ in normalized coordinates $t$
+						("time"): $$B_n(t) = \sum_{i=0}^{n} \binom{n}{i} t^i (1-t)^{n-i} P_i, \quad \text{with} \quad t
+						\in [0, 1]$$
+					</p>
+					<div class="fragment">
+						<p style="margin-top: 40px">
+							<span class="highlight-blue">Examples</span> for Bézier curves of degrees 1 to 3
+						</p>
+						<img
+							src="content/images/bezier_curves_1-3.png"
+							style="width: auto; height: 150px; margin-top: 0px; margin-bottom: 0px"
+						/>
+					</div>
+					<div class="fragment flex-container-row">
+						<p>
+							This curve is named after French engineer Pierre Bézier, who used it in the 1960s for designing
+							curves for the bodywork of Renault cars.
+						</p>
+						<img
+							src="content/images/bezier_portrait.png"
+							style="width: 100px; height: auto; border-radius: 10px"
+						/>
+					</div>
+				</section>
+
+				<section>
+					<h3>Bézier curves are weighted combinations of Bernstein polynomials</h3>
+					<p>A <span class="highlight-blue">Bernstein polynomial of degree $n$</span> is defined as:</p>
+					<p>$$b_{i,n}(t) = \binom{n}{i} t^i (1-t)^{n-i}, \quad \text{with} \quad i = 0, \dots, n$$</p>
+					<div class="fragment">
+						<p>Compare this to the definition of the Bézier curve:</p>
+						<p>
+							$$B_n(t) = \sum_{i=0}^{n} \binom{n}{i} t^i (1-t)^{n-i} P_i, \quad \text{with} \quad t \in
+							[0, 1]$$
+						</p>
+					</div>
+				</section>
+
+				<section>
+					<h3>Bernstein polynomials</h3>
+					<p>$$b_{i,n}(t) = \binom{n}{i} t^i (1-t)^{n-i}, \quad \text{with} \quad i = 0, \dots, n$$</p>
+					<img
+						src="content/images/bernstein_poly_8.png"
+						style="width: auto; height: 250px; margin-top: 5px; margin-bottom: 5px; border-radius: 15px"
+						;
+					/>
+
+					<p>Interesting properties of Bernstein polynomials:</p>
+					<ul>
+						<li>They are non-negative: $b_{i,n}(t) \geq 0$ for all $t$ and $i$.</li>
+						<li>They sum to one: $\sum_{i=0}^{n} b_{i,n}(t) = 1$ for all $t$.</li>
+					</ul>
+				</section>
+
+				<! --------------------------------------------------------------------------------------------------------- -->
+
+				<section>
+					<img
+						src="content/images/meme_get_to_the_point.png"
+						style="width: 400px; height: auto; border-radius: 15px"
+					/>
+				</section>
+
+				<section>
+					<h3 style="width: 114%; transform: translateX(-7%)">Bézier-Bernstein parametrization of the CDF</h3>
+					<ol>
+						<li>
+							<span class="highlight-red">Bound the domain</span> of $X$ to $[L, U] \rightarrow t \in [0,
+							1]$
+						</li>
+						<div class="fragment">
+							<li>
+								Use a <span class="highlight-green">model's output $y \in \mathbb{R}^n$ as logits</span>
+							</li>
+							<ul>
+								<li class="fragment">
+									The dimensionality of the output determines the degree of the Bézier curve $n$
+								</li>
+								<li class="fragment">
+									<span class="highlight-blue">Normalize output $y$</span> $\rightarrow$ factor for
+									local probability mass $\Delta_i$ with
+									<span class="highlight-blue">$\sum_{i=0}^{n-1} \Delta_i = 1$</span> (e.g., via
+									softmax)
+								</li>
+								<li class="fragment">
+									The
+									<span class="highlight-blue"
+										>weighting factor from the Bernstein polynomials $b_{i,n}(t)$</span
+									>
+									is the cumulative sum
+									<span class="highlight-blue">$\beta_k = \sum_{i=0}^{k-1} \Delta_i$</span>
+								</li>
+							</ul>
+						</div>
+						<div class="fragment">
+							<li>
+								<p>
+									Compute the CDF as a weighted sum $$ F(t) = \sum_{i=0}^{n} \beta_i \cdot b_{i,
+									n}(t), \quad \text{with} \quad \beta_i \ge 0$$
+								</p>
+								<p>
+									The $\beta_i$ are the y-coordinates of the CDF's control points. Along the $X$-axis,
+									the control points are uniformly distributed at $t_i = \frac{i}{n}$.
+								</p>
+							</li>
+						</div>
+					</ol>
+				</section>
+
+				<section>
+					<h3>Properties of this parametrization</h3>
+					<ul>
+						<li>
+							<span class="highlight-green">Valid by construction</span>: the CDF is a convex combination
+							of Bernstein polynomials
+						</li>
+						<li class="fragment">
+							<span class="highlight-green">Unconstrained optimization</span>: useable by any deep
+							learning framework
+						</li>
+						<li class="fragment">
+							<span class="highlight-green">Very efficient implementation</span>: no numerical integration
+							required since we are parametrizing a CDF, and computing polynomials is fast and
+							parallelizable
+						</li>
+						<li class="fragment">
+							<span class="highlight-green">Flexible CDF</span>: model output dimension determines the
+							flexibility of the CDF, <span class="highlight-red">but</span> $n>150$ causes numerical
+							instability
+						</li>
+						<li class="fragment">
+							<span class="highlight-red">Slow error rate</span>: the worst-case pointwise approximation
+							error converges at $O(1/n)$
+						</li>
+						<li class="fragment">
+							<span class="highlight-red">Peak sharpness</span>: the standard deviation of the sharpest
+							representable peak scales at $O(1/\sqrt{n})$.
+						</li>
+					</ul>
+				</section>
+
+				<! --------------------------------------------------------------------------------------------------------- -->
+
+				<section>
+					<h3>"I had done this 100 years ago"</h3>
+					<div class="flex-container-row">
+						<div>
+							<p>
+								Bernstein invented these polynomials in 1912 to prove the Weierstrass approximation
+								theorem
+							</p>
+							<p>
+								Weierstrass approximation theorem says that any continuous function on a closed interval
+								can be uniformly approximated by polynomials
+							</p>
+						</div>
+						<img
+							src="content/images/bernstein_portrait.png"
+							style="width: 200px; height: auto; border-radius: 10px"
+						/>
+					</div>
+				</section>
+
+				<section>
+					<h3>The Density Approximation Theorem</h3>
+					<div class="flex-container-row">
+						<img
+							src="content/images/vitale_portrait.png"
+							style="width: 200px; height: auto; border-radius: 10px; align-self: flex-start"
+						/>
+						<div>
+							<p>
+								Vitale proved in 1975 that
+								<span class="highlight-blue">any continuous PDF</span> $f(x)$ on $[0,1]$
+								<span class="highlight-blue"
+									>can be uniformly approximated by a mixture of Beta distributions</span
+								>
+							</p>
+							<p>
+								$$f_n(x) = \frac{1}{n} \sum_{i=0}^{n-1} w_i \cdot \Beta \big(x \;\big|\; \alpha = i+1,
+								\beta =n-i \big)$$
+							</p>
+						</div>
+					</div>
+				</section>
+
+				<! --------------------------------------------------------------------------------------------------------- -->
+
+				<section>
+					<h2 style="width: 80%; transform: translateX(10%)">
+						The Bézier-Bernstein CDF parameterization is equivalent to mixture of Beta distributions
+					</h2>
+				</section>
+
+				<section>
+					<h4>1/3 The derivative of the Bézier-Bernstein CDF</h4>
+					<p>Our CDF is a Bézier curve of degree $n$: $F(t) = \sum_{i=0}^{n} \beta_i \cdot b_{i,n}(t)$</p>
+					<div class="fragment">
+						<p>
+							The derivative of a Bernstein polynomial is the
+							<span class="highlight-blue">difference of two polynomials of degree $n-1$</span>:
+						</p>
+						<p>$$\frac{d}{dt} b_{i,n}(t) = n \left( b_{i-1, n-1}(t) - b_{i, n-1}(t) \right)$$</p>
+					</div>
+					<div class="fragment">
+						<p>
+							Applying this to $F(t)$ causes a telescoping sum,
+							<span class="highlight-blue">mapping the difference directly to the coefficients</span>:
+						</p>
+						<p>$$f(t) = \frac{d}{dt}F(t) = n \sum_{i=0}^{n-1} (\beta_{i+1} - \beta_i) b_{i, n-1}(t)$$</p>
+					</div>
+					<div class="fragment">
+						<p>Since $\Delta_i = \beta_{i+1} - \beta_i$, we get our PDF:</p>
+						<p>
+							<span class="highlight-green"
+								>$$f(t) = n \sum_{i=0}^{n-1} \Delta_i \cdot b_{i, n-1}(t)$$</span
+							>
+						</p>
+					</div>
+				</section>
+
+				<section>
+					<h4>2/3 Connecting Bernstein to Beta</h4>
+					<p>
+						<span class="highlight-blue">Vitale's target Beta distribution</span> uses $\alpha = i+1$ and
+						$\beta = n-i$:
+					</p>
+					<p>$$\Beta(t \,|\, i+1, n-i) = \frac{t^i(1-t)^{n-i-1}}{\text{B}(i+1, n-i)}$$</p>
+					<div class="fragment">
+						<p>The Beta function $\text{B}$ expands using exact factorials:</p>
+						<p>
+							$$\text{B}(i+1, n-i) = \frac{\Gamma(i+1)\Gamma(n-i)}{\Gamma(n+1)} = \frac{i! \,
+							(n-i-1)!}{n!}$$
+						</p>
+					</div>
+					<div class="fragment">
+						<p>Substituting this back into the Beta PDF gives:</p>
+						<p>
+							$$\begin{aligned} \Beta(t \,|\, i+1, n-i) &= \frac{n!}{i! \, (n-i-1)!} \, t^i \,
+							(1-t)^{n-i-1} \\ &= n \binom{n-1}{i} \, t^i \,(1-t)^{n-1-i}\end{aligned}$$
+						</p>
+					</div>
+					<div class="fragment">
+						<p>Which reveals the hidden <span class="highlight-blue">Bernstein polynomial:</span></p>
+						<p>
+							<span class="highlight-green">$$\Beta(t \,|\, i+1, n-i) = n \cdot b_{i, n-1}(t)$$</span>
+						</p>
+					</div>
+				</section>
+
+				<section>
+					<h4>3/3 The equivalence</h4>
+					<p>We now have all pieces of the puzzle:</p>
+					<ol>
+						<li>
+							<span class="highlight-green"
+								>$f(t) = \sum_{i=0}^{n-1} \Delta_i \left( n \cdot b_{i, n-1}(t) \right)$</span
+							>
+						</li>
+						<li>
+							<span class="highlight-green">$n \cdot b_{i, n-1}(t) = \Beta(t \,|\, i+1, n-i)$</span>
+						</li>
+					</ol>
+					<div class="fragment">
+						<p>Substitute (2) into (1), and the equivalence is proven:</p>
+						<div
+							style="
+								border: 2px solid #4a90e2;
+								padding: 10px;
+								border-radius: 10px;
+								margin-top: 10px;
+								margin-bottom: 10px;
+							"
+						>
+							<p>$$f(t) = \sum_{i=0}^{n-1} \Delta_i \Beta(t \,|\, i+1, n-i)$$</p>
+						</div>
+					</div>
+					<div class="fragment" style="width: 80%; transform: translateX(10%)">
+						<p>&rArr; The derivative of a Bézier CDF is exactly a mixture of Beta distributions</p>
+						<p>
+							&rArr; The forward differences of the control points
+							<span class="highlight-blue">$\Delta_i$</span> act as the
+							<span class="highlight-blue">mixture weights</span>.
+						</p>
+					</div>
+				</section>
+
+				<! --------------------------------------------------------------------------------------------------------- -->
+
+				<section>
+					<h3>Summary</h3>
+
+					<ul>
+						<li class="fragment">
+							<span class="highlight-green"
+								>What we have is a very flexible parameterization of a probability distribution with
+								strong guarantees</span
+							>
+						</li>
+						<li class="fragment">
+							<span class="highlight-red"
+								>The approximation rate (affects optimization) w.r.t. degree of the polynomial is very
+								slow and the sharpness (resolution) is limited</span
+							>
+						</li>
+						<li class="fragment">
+							<span class="highlight-blue">The implementation is very efficient</span>
+						</li>
+						<ul>
+							<li class="fragment">Precomputing of the binomial coefficients</li>
+							<li class="fragment">
+								Custom methods for <code>cdf</code>, <code>pdf</code>, and
+								<code>rsample</code> (numerically stable and fast)
+							</li>
+							<li class="fragment">Highly parallelized code with GPU support</li>
+						</ul>
+						<li class="fragment">I currently do not have "real-world" results to show</li>
+						<li class="fragment">
+							<span class="highlight-blue">The next step is writing an invention report</span>
+						</li>
+					</ul>
+				</section>
+				<!-- ======================================================================================================= -->
+			</div>
+			<!-- slides -->
+		</div>
+		<!-- reveal -->
+
+		<!-- =========================================================================================================== -->
+
+		<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.0.5/dist/reveal.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.0.5/plugin/highlight/highlight.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.0.5/plugin/math/math.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.0.5/plugin/search/search.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.0.5/plugin/zoom/zoom.js"></script>
+		<!-- <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.0.5/plugin/notes/notes.js"></script> -->
+		<!-- <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.0.5/plugin/markdown/markdown.js"></script> -->
+		<!-- Comment back in if you want to use graphs -->
+		<script src="third_party/reveald3/reveald3.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				controls: true, // controls
+				progress: true, // progress bar
+				history: true, // push each slide change to the browser history, implies hash: true
+				// width: "100%", // weird scaling of the \textwidth
+				center: true, // center vertically
+				transition: "slide", // https://revealjs.com/transitions/
+				slideNumber: "h.v", // https://revealjs.com/slide-numbers/
+				viewDistance: 3,
+				pdfMaxPagesPerSlide: 1, // for PDF export
+
+				math: {
+					mathjax: "https://cdn.jsdelivr.net/gh/mathjax/mathjax@2.7.8/MathJax.js",
+					// mathjax: 'third_party/reveal.js/plugin/math/MathJax/es5/tex-chtml-full.js',
+					config: "TeX-AMS_HTML-full", // https://docs.mathjax.org/en/v2.7-latest/config-files.html
+					// Pass other options into `MathJax.Hub.Config()`
+					TeX: {
+						extensions: ["HTML.js", "color.js"], // to use custom colors via \class{}{} https://stackoverflow.com/questions/44715432/how-to-define-custom-colors-in-mathjax-in-config
+						inlineMath: [
+							["$", "$"],
+							["\\(", "\\)"],
+						], // inline symbols are not working for local mathjax
+						// packages: {"[+]": ["xcolor"]},
+						Macros: {
+							RR: "{\\bf R}",
+							trans: "{\\textsf{T}}" /* alternatively \\top or \\intercal */,
+							diff: "\\mathrm{d}",
+							bluexi: "{\\color{var(--bright-blue)} \\xi}",
+							bluephi: "{\\color{var(--bright-blue)} \\phi}",
+							redRRlpatch: "{\\color{var(--bright-red)} \\RR^{l_{patch}}}",
+							Wq: "W^{(q)}",
+							Wk: "W^{(k)}",
+							Wv: "W^{(v)}",
+							pk: "p^{(k)}",
+							pv: "p^{(v)}",
+							redP: "{\\color{var(--bright-red)} P}" /* or\ textcolor{var(--bright-red)}{P} */,
+							redpluspi: "{\\color{var(--bright-red)} + p_{i}}",
+							redpluspj: "{\\color{var(--bright-red)} + p_{j}}",
+							redpluspijk: "{\\color{var(--bright-red)} + p_{ij}^{(k)}}",
+							redpluspijv: "{\\color{var(--bright-red)} + p_{ij}^{(v)}}",
+							greypluspijq: "{\\color{var(--bright-grey)} + p_{ij}^{(v)}}",
+							CRPS: "\\operatorname{CRPS}",
+							SCRPS: "\\operatorname{SCRPS}",
+							QL: "\\operatorname{QL}",
+							Beta: "\\operatorname{Beta}",
+						},
+					},
+					"HTML-CSS": {
+						// https://docs.mathjax.org/en/v2.7-latest/options/output-processors/HTML-CSS.html#configure-html-css
+						scale: 80, // adjusts the container of mathjax equations
+					},
+					// reveald3: {
+					// 	// See doc at https://github.com/gcalmettes/reveal.js-d3
+					// 	runLastState: false, // default: true
+					// 	onSlideChangedDelay: 200, // in ms, default: 0
+					// },
+				},
+				plugins: [
+					// https://revealjs.com/plugins/
+					RevealZoom,
+					// Comment back in if you want to use graphs
+					Reveald3,
+					RevealMath,
+					RevealHighlight,
+					// Reveald3,
+				],
+
+				dependencies: [
+					// { src: 'third_party/reveal.js/plugin/math/math.js', async: true }, // loads MathJax from the internet if not specified above (math: { ... mathjax: ... ) )
+
+					// Headers and footers
+					{
+						src: "third_party/header-footer/header-footer.js",
+						async: true,
+						callback: function () {
+							slide_header.initialize({
+								header: {
+									// logoRight: "./content/logos/XYZ.png",
+									// logoLeft: "./content/logos/XYZ.png",
+									background: "rgba(170, 34, 51, 0)", // = #a23
+								},
+								footer: {
+									background: "rgba(170, 34, 51, 0)", // = #a23
+									// logoRight: "./content/logos/XYZ.png",
+									text: "Fabio Muratore &ensp; | &ensp; 2026-04-23",
+								},
+							});
+						},
+					},
+					{ src: "third_party/reveald3/reveald3.js" },
+				],
+			}); // end Reveal.initialize()
+		</script>
+	</body>
+</html>

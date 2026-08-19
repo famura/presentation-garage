@@ -1,0 +1,92 @@
+{
+    "nodes": [
+        {
+            "id": "sample_domains", "opacity": 1, "fx": 100, "fy": 50,
+            "labels": [
+                {"text": "sample domains"},
+                {"math": "\\xi_{1:n_c}",         "offset": "-70, 16"},
+                {"math": "\\xi^{1:n_G}_{1:n_r}", "offset": "+30, 10"}
+            ]
+        },
+        {
+            "id": "train_candidate", "opacity": 0, "fx": 140, "fy": 250,
+            "labels": [
+                {"text": "train candidate and"},
+                {"text": "reference policies",             "offset": "0, baselineSkip"},
+                {"math": "\\theta^{\\star}_{n_c}",         "offset": "-50, baselineSkip + 16"},
+                {"math": "\\theta^{\\star,1:n_{G}}_{n_r}", "offset": "+30, baselineSkip + 12"}
+            ]
+        },
+        {
+            "id": "evaluate_returns", "opacity": 0, "fx": 250, "fy": 450,
+            "labels": [
+                {"text": "evaluate in"},
+                {"text": "reference domains",                              "offset": "0, baselineSkip"},
+                {"math": "\\hat{J}_{n_J}(\\theta^{\\star}_{n_c})",         "offset": "-150, baselineSkip + 10"},
+                {"math": "\\hat{J}_{n_J}(\\theta^{\\star,1:n_{G}}_{n_r})", "offset": "0, baselineSkip + 10"}
+            ]
+        },
+        {
+            "id": "estimate_OG", "opacity": 0, "fx": 620, "fy": 450,
+            "labels": [
+                {"text": "estimate the"},
+                {"text": "optimality gap",             "offset": "0, baselineSkip"},
+                {"math": "\\hat{G}^{1:n_G}_{1:n_{r}}", "offset": "-30, baselineSkip + 10"}
+            ]
+        },
+        {
+            "id": "bootstrap_UCBOG", "opacity": 0, "fx": 820, "fy": 270,
+            "labels": [
+                {"text": "bootstrap upper"},
+                {"text": "confidence bound",                         "offset": "0, baselineSkip"},
+                {"math": "\\hat{G}^{U}_{n_r}(\\theta^\\star_{n_c})", "offset": "-30, baselineSkip + 10"}
+            ]
+        },
+        {
+            "id": "small_enough", "opacity": 0, "fx": 850, "fy": 150,
+            "labels": [
+                {"text": "small enough?"}
+            ]
+        },
+        {
+            "id": "done", "opacity": 0, "fx": 900, "fy": 50, "class": "green",
+            "labels": [
+                {"text": "done"}
+            ]
+        },
+        {
+            "id": "increase_domains", "opacity": 0, "fx": 450, "fy": 140,
+            "labels": [
+                {"text": "increase number of domains"},
+                {"math": "n_c,n_r \\leftarrow f(n_c),f(n_r)", "offset": "-150, 10"}
+            ]
+        }
+    ],
+    "links": [
+        {"source": "sample_domains", "target": "train_candidate",
+            "waypoints": [
+                [110, 120],
+                [130, 170]
+            ]
+        },
+        {"source": "train_candidate", "target": "evaluate_returns",
+            "waypoints": [
+                [160, 340]
+            ]
+        },
+        {"source": "evaluate_returns", "target": "estimate_OG"},
+        {"source": "estimate_OG", "target": "bootstrap_UCBOG",
+            "waypoints": [
+                [650, 340]
+            ]
+        },
+        {"source": "bootstrap_UCBOG", "target": "small_enough"},
+        {"source": "small_enough", "target": "done", "class": "green"},
+        {"source": "small_enough", "target": "increase_domains", "class": "red"},
+        {"source": "increase_domains", "target": "sample_domains",
+            "waypoints": [
+                [350, 50]
+            ]
+        }
+    ]
+}

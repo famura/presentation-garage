@@ -1,0 +1,148 @@
+/* Main style of slide-header */
+#slide-header {
+  opacity: 1;
+  transition: opacity 800ms ease-in-out;
+  height: 5vh;
+  z-index: 20;
+  width: 100%;
+  font-size: 4vh;
+  text-align: center;
+  letter-spacing: 0em;
+  padding-top: 1vh;
+  padding-bottom: 0.5vh;
+}
+
+/* Top position of header bar */
+#slide-header {
+  top: 0px;
+}
+
+/* Arrange all header divs in-line */
+#slide-header div {
+  display: inline-block;
+}
+
+/* Images inside the header */
+.header-logo-right {
+  flex: 1;
+  float: right;
+  width: 10%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  padding: 0px;
+  margin: auto;
+}
+
+.header-logo-left {
+  flex: 1;
+  float: left;
+  width: 10%;
+  height: 100%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  padding: 0px;
+  margin: auto;
+}
+
+.header-logo {
+  max-height: 100% !important;
+  width: auto;
+  object-fit: scale-down !important;
+  margin: auto !important;
+  display: block;
+}
+
+/* Make slide-header invisible if explicitly indicated */
+.no-slide-header #slide-header {
+  opacity: 0;
+  transition: opacity 800ms ease-in-out;
+}
+
+/* Main Style for the slide-footer */
+/* % 	Relative to the parent element */
+/* vh 	Relative to 1% of the height of the viewport* */
+#slide-footer {
+  opacity: 1;
+  transition: opacity 800ms ease-in-out;
+  position: fixed;
+  height: 3.5vh;
+  z-index: 20;
+  width: 100%;
+  font-size: 2.5vh;
+  text-align: center;
+  letter-spacing: 0em;
+  padding-top: 0.5vh;
+  padding-bottom: 0.5vh; /*actually we want sth like 1.0vh to match the header padding, but with the progress bar it is visually the same*/
+}
+
+/* Bottom position for the slide-footer footer when both progress bar and TOC-Progress are visible */
+div.progress[style="display: block;"] ~ #slide-footer {
+  bottom: calc(3px + 10.5vh);
+}
+
+/* Bottom position for the slide-footer footer when TOC-Progress is visible */
+#slide-footer {
+  bottom: 10.5vh;
+}
+
+#slide-footer div {
+  display: inline-block;
+}
+
+.footer-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%; /*mind the sizes of the left and right footer divs*/
+}
+
+/* Bottom position for the slide-footer footer when progress bar (height = 3px) is visible */
+div.progress[style="display: block;"] ~ footer:last-of-type#slide-footer {
+  bottom: 5px;
+}
+
+.controls {
+  bottom: 65px !important;
+  z-index: 1000 !important;
+}
+
+/* Bottom position for the slide-footer footer when neither progress bar nor TOC-Progress are visible */
+footer:last-of-type#slide-footer {
+  bottom: 0px;
+}
+
+/* Make slide-footer and slide-header invisible if explicitly indicated */
+.no-slide-footer #slide-footer {
+  opacity: 0;
+  transition: opacity 800ms ease-in-out;
+}
+
+.no-toc-progress #slide-footer {
+  opacity: 0;
+  transition: opacity 800ms ease-in-out;
+}
+
+.no-slide-header #slide-header {
+  opacity: 0;
+  transition: opacity 800ms ease-in-out;
+}
+
+.no-toc-progress #slide-header {
+  opacity: 0;
+  transition: opacity 800ms ease-in-out;
+}
+
+/* Make slide-footer and slide-header invisible in overview mode */
+.overview #slide-footer {
+  opacity: 0;
+  transition: opacity 800ms ease-in-out;
+}
+
+.overview #slide-header {
+  opacity: 0;
+  transition: opacity 800ms ease-in-out;
+}

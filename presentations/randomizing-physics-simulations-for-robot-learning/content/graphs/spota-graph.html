@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<meta charset="utf-8" />
+
+<!-- =============================================================================================================== -->
+
+<head>
+  <!-- Link custom css files (not necessary?!) -->
+  <!-- <link rel="stylesheet" href="dist/reveal.css" /> -->
+  <!-- <link rel="stylesheet" href="dist/theme/famura.css" id="theme" /> -->
+
+  <style type="text/css">
+    .node {
+      color: #f2f2f2;
+      fill: azure;
+      font: inherit;
+      font-weight: lighter;
+    }
+    .link {
+      stroke: rgb(246, 178, 107);
+      stroke-opacity: 1;
+      stroke-width: 4px;
+    }
+    .dashed {
+      stroke-dasharray: 6, 4;
+    }
+    .famurabrightred {
+      stroke: #ee4422;
+    }
+    .famurabrightgreen {
+      stroke: #bdecb6;
+    }
+    .bolder {
+      font-weight: bolder;
+    }
+  </style>
+</head>
+
+<!-- =============================================================================================================== -->
+
+<body>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg-full.js"></script>
+  <script type="text/javascript" src="../../slide-graph.js"></script>
+  <!-- THIS PATH MUST BE SET: relative to this file, or relative to root ('/slide-graph.js') -->
+
+  <script>
+    var width = 960,
+      height = 650, // reveal.js slide width is 960px and slide height is 700px; leave some space for the heading
+      baselineSkip = 30, // to be used in the associated <NAME>-graph.json file
+      withSubscriptSkip = 16, // to be used in the associated <NAME>-graph.json file
+      withSubAndSuperscriptSkip = 10 // to be used in the associated <NAME>-graph.json file
+
+    // NOTE:
+    // Three ways to provide graph data:
+    // 1. In index.html, add `data-graph="filename.json"` to the slide including this file
+    // 2. Load a json file directly here:
+    //    d3.json("spota-graph.json").then(function(data) {
+    //      loadGraph(data);
+    //    });
+    // 3. Construct the data here and pass it to `loadGraph`:
+    //     var data = { nodes: [
+    //                     {id: "test1", opacity: 1, fx: 200, fy: 160, labels: [{text: "Test1"}]},
+    //                     {id: "test2", opacity: 1, fx: 400, fy: 200, labels: [{text: "Test2"}]}
+    //                  ],
+    //                  links: [
+    //                     {source: "test1", target: "test2", type: "A"},
+    //                     {source: "test2", target: "test1", type: "B"}
+    //                  ]
+    //                 };
+    //     loadGraph(data);
+
+    data = {
+      nodes: [
+        {
+          id: "sample_domains",
+          opacity: 1,
+          fx: 135,
+          fy: 50,
+          labels: [
+            {text: "sample candidate and"},
+            {text: "reference domains", offset: "0, baselineSkip"},
+            {math: "\\xi_{1:n_c}", offset: "-70, baselineSkip + 16"},
+            {math: "\\xi^{1:n_G}_{1:n_r}", offset: "+30, baselineSkip + 10"},
+          ],
+        },
+        {
+          id: "train_candidate",
+          opacity: 0,
+          fx: 155,
+          fy: 250,
+          labels: [
+            {text: "train candidate and", class: "bolder"},
+            {text: "reference policies", offset: "0, baselineSkip", class: "bolder"},
+            {math: "\\theta^{\\star}_{n_c}", offset: "-50, baselineSkip + 16"},
+            {math: "\\theta^{\\star,1:n_{G}}_{n_r}", offset: "+30, baselineSkip + 12"},
+          ],
+        },
+        {
+          id: "evaluate_returns",
+          opacity: 0,
+          fx: 250,
+          fy: 450,
+          labels: [
+            {text: "evaluate in"},
+            {text: "reference domains", offset: "0, baselineSkip"},
+            {math: "\\hat{J}_{n_J}(\\theta^{\\star}_{n_c})", offset: "-150, baselineSkip + 10"},
+            {math: "\\hat{J}_{n_J}(\\theta^{\\star,1:n_{G}}_{n_r})", offset: "0, baselineSkip + 10"},
+          ],
+        },
+        {
+          id: "estimate_OG",
+          opacity: 0,
+          fx: 620,
+          fy: 480,
+          labels: [{text: "estimate the"}, {text: "optimality gap", offset: "0, baselineSkip"}, {math: "\\hat{G}^{1:n_G}_{1:n_{r}}(\\theta^\\star_{n_c})", offset: "-60, baselineSkip + 10"}],
+        },
+        {
+          id: "bootstrap_UCBOG",
+          opacity: 0,
+          fx: 820,
+          fy: 300,
+          labels: [{text: "bootstrap upper"}, {text: "confidence bound", offset: "0, baselineSkip"}, {math: "\\hat{G}^{U}_{n_r}(\\theta^\\star_{n_c})", offset: "-50, baselineSkip + 10"}],
+        },
+        {
+          id: "small_enough",
+          opacity: 0,
+          fx: 850,
+          fy: 170,
+          labels: [{text: "small enough?"}],
+        },
+        {
+          id: "done",
+          opacity: 0,
+          fx: 900,
+          fy: 50,
+          // class: "famurabrightgreen",
+          labels: [{text: "done"}],
+        },
+        {
+          id: "increase_domains",
+          opacity: 0,
+          fx: 450,
+          fy: 135,
+          labels: [{text: "increase number"}, {text: "of domains", offset: "0, baselineSkip"}, {math: "n_c, n_r", offset: "-40, baselineSkip + 12"}],
+          // {math: "n_c,n_r \\leftarrow f(n_c),f(n_r)", offset: "-150, 10"}
+        },
+      ],
+      links: [
+        {
+          source: "sample_domains",
+          target: "train_candidate",
+          waypoints: [
+            [135, 120],
+            [150, 170],
+          ],
+        },
+        {source: "train_candidate", target: "evaluate_returns", waypoints: [[170, 335]]},
+        {source: "evaluate_returns", target: "estimate_OG", waypoints: [[460, 480]]},
+        {source: "estimate_OG", target: "bootstrap_UCBOG", waypoints: [[650, 370]]},
+        {source: "bootstrap_UCBOG", target: "small_enough", waypoints: [[840, 240]]},
+        {source: "small_enough", target: "done", class: "famurabrightgreen", waypoints: [[860, 90]]},
+        {source: "small_enough", target: "increase_domains", class: "famurabrightred", waypoints: [[700, 140]]},
+        {source: "increase_domains", target: "sample_domains", waypoints: [[350, 50]]},
+      ],
+    }
+    loadGraph(data)
+
+    // NOTE:
+    // Slide transitions are defined here. Each transition is actually just a small lambda function. For both forward and
+    // backward steps through the presentation to work, you need to define a function both for each transition AND one
+    // to un-do each transition (but the backward steps ARE optional if you don't care).
+
+    // NOTE:
+    // When you move INTO this slide by going BACKWARDS through the presentation, the LAST `transitionForward()`
+    // will be invoked. This gives you the chance to build the final slide state and keep everything nice and continuous.
+    // This is why the last transition below enables ALL nodes instead of just the last one. Here I have provided a small
+    // function which will toggle the visibility of a node, using its index in data.nodes[] above. Arrow visibility is
+    // automatically set based on whether the nodes the arrow connects are visible. e.g. `showNode(2, true)` will make
+    // the "evaluate in reference domains" node visible along with any arrows that connect this node to another visible node.
+
+    _transitions = [
+      {
+        transitionForward: () => {
+          showNodes([1], true)
+        },
+        transitionBackward: () => showNodes([1], false),
+        index: 0,
+      },
+      {
+        transitionForward: () => showNode(2, true),
+        transitionBackward: () => showNode(2, false),
+      },
+      {
+        transitionForward: () => showNode(3, true),
+        transitionBackward: () => showNode(3, false),
+      },
+      {
+        transitionForward: () => showNode(4, true),
+        transitionBackward: () => showNode(4, false),
+      },
+      {
+        transitionForward: () => showNode(5, true),
+        transitionBackward: () => showNode(5, false),
+      },
+      {
+        transitionForward: () => showNode(6, true),
+        transitionBackward: () => showNode(6, false),
+      },
+      {
+        transitionForward: () => showNode(7, true),
+        transitionBackward: () => showNode(7, false),
+      },
+
+      {
+        transitionForward: () => {
+          showNodes([7, 6, 5, 4, 3, 2, 1], true, 100)
+          d3.select(".link").classed("dashed", true).transition().duration(5000).ease(d3.easeBackOut).attr("stroke-dashoffset", -150)
+        },
+        transitionBackward: () => {
+          d3.select(".link").classed("dashed", false).transition().duration(5000).ease(d3.easeBackOut).attr("stroke-dashoffset", 0)
+        },
+      },
+    ]
+
+    document.addEventListener("keydown", function (e) {
+      if (e.key == "o") {
+        showAllNodes(true)
+      }
+    })
+  </script>
+
+  <!-- ============================================================================================================= -->
+</body>

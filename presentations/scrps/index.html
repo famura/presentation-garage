@@ -1,0 +1,1048 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Dr. Fabio Muratore" />
+    <meta
+      name="description"
+      content="Why the CRPS is the loss function for probabilistic forecasts, why its scale-variance hurts on time series data, and how the SCRPS fixes it."
+    />
+    <meta name="date" content="2026-03-26" />
+    <title>The Continuously-Ranked Probability Score</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/monokai.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <!-- ======================================================================================================= -->
+
+        <section data-state="no-slide-footer">
+          <h2 class="title">
+            The <br />
+            Continuously-Ranked <br />
+            Probability Score
+          </h2>
+          <p>A Strictly Proper Scoring Rule for Probabilistic Forecasts</p>
+        </section>
+
+        <!-- ======================================================================================================= -->
+
+        <section>
+          <h3>Why Should You Care?</h3>
+          <img src="content/images/why.jpg" style="width: auto; height: 300px; border-radius: 15px; margin: 0px" />
+          <p class="fragment">Think about a Bayesian regression problem.</p>
+          <p class="fragment">
+            To train probabilistic models you <span class="highlight-blue">need a loss function</span>.
+          </p>
+          <p class="fragment">The CRPS can serve as such a loss function.</p>
+        </section>
+
+        <section>
+          <h3>Don't Take My Word For It.</h3>
+          <p class="highlight-blue">Top-tier publications highlight its importance.</p>
+          <div class="fragment">
+            <p><a href="content/papers/Amazon-Chronos_2024.pdf">Amazon: Chronos (2024)</a> <br /></p>
+            <p>
+              <a href="content/papers/Salesforce-Moirai2_2025.pdf">Salesforce: Moirai 2.0 (2025)</a>
+            </p>
+            <p>
+              <a
+                href="https://www.semanticscholar.org/paper/Scoring-Rules-for-Continuous-Probability-Matheson-Winkler/bba89e955b005b05bdadffc517b781fccae8e562"
+                >Matheson & Winkler (1976)</a
+              >
+            </p>
+            <p style="width: 90%">
+              They all use the CRPS, or an approximation of it, as the
+              <span class="highlight-blue">training objective</span>, claiming
+              <span class="highlight-blue"> better performance</span> than with the alternatives.
+            </p>
+          </div>
+          <p class="fragment">
+            The CRPS is also used as an <span class="highlight-blue">evaluation metric</span> in benchmarks.
+            <br />
+            <a href="content/papers/Microsoft-ProbTS_2024.pdf">Microsoft: ProbTS (2024)</a>
+          </p>
+        </section>
+
+        <!-- ======================================================================================================= -->
+
+        <section>
+          <h3>What Is The CRPS?</h3>
+          <p>
+            The CRPS measures the difference between a predicted cumulative distribution function (CDF) and the
+            empirical CDF of the actual observation.
+          </p>
+          <div class="fragment">
+            <p>$$ \CRPS(F, y) = \int_{-\infty}^{\infty} \big( F(x) - \mathbb{1}_{x \ge y} \big)^2 dx $$</p>
+            <table class="compact-table" style="font-size: 80%">
+              <tbody>
+                <tr>
+                  <td>$X$</td>
+                  <td>the random variable representing the forecast</td>
+                </tr>
+                <tr>
+                  <td>$x$</td>
+                  <td>realization of $X$</td>
+                </tr>
+                <tr>
+                  <td>$F(X)$</td>
+                  <td>CDF of the forecaster</td>
+                </tr>
+                <tr>
+                  <td>$y$</td>
+                  <td>observed value (ground truth)</td>
+                </tr>
+                <tr>
+                  <td>$\mathbb{1}_{x \ge y}$</td>
+                  <td>indicator function := 1 if $x \ge y$, else 0</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section>
+          <h3>What Is The CRPS?</h3>
+          <p>$$ \CRPS(F, y) = \int_{-\infty}^{\infty} \big( F(x) - \mathbb{1}_{x \ge y} \big)^2 dx $$</p>
+          <object
+            type="image/svg+xml"
+            data="content/images/crps_abstract.svg"
+            class="full-svg"
+            style="width: auto; height: 25vh; border-radius: 15px"
+          ></object>
+          <p style="max-width: 1100px; margin: 0.6em auto; text-align: center">
+            <span class="highlight-blue">The closer the CDF is to a step function at the observed value, </span
+            ><br />the lower the CRPS, the better the forecaster.
+          </p>
+        </section>
+
+        <!-- ======================================================================================================= -->
+
+        <section>
+          <section>
+            <h3 style="width: 110%; position: relative; left: 50%; transform: translateX(-50%)">
+              The CRPS Is A Strictly Proper Scoring Rule
+            </h3>
+            <table class="compact-table" style="font-size: 80%">
+              <tbody>
+                <tr>
+                  <td>$S(\cdot, \cdot)$</td>
+                  <td>a scoring rule <span class="highlight-grey">("distance measure")</span></td>
+                </tr>
+                <tr>
+                  <td>$P$</td>
+                  <td>the true distribution</td>
+                </tr>
+                <tr>
+                  <td>$Q$</td>
+                  <td>the forecasted distribution</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="fragment">
+              <p class="highlight-blue" style="margin-bottom: 0vh">
+                <span>A (negatively-oriented) scoring rule is proper if</span>
+              </p>
+              <p style="margin-top: -20px">$$ S(P, P) \le S(Q, P) $$</p>
+              <div class="fragment">
+                <p class="highlight-blue" style="margin-top: -10px">and strictly proper if</p>
+                <p style="margin-top: -20px">$$ S(Q, P) = S(P, P) \Longleftrightarrow Q = P $$</p>
+              </div>
+            </div>
+            <p class="fragment">
+              A scoring rule is proper if the expected score $\mathbb{E}_{Y \sim P}[S(Q, Y)]$ is minimized when the
+              forecast distribution matches the true distribution of the observation
+              <a href="content/papers/Gneiting_2007.pdf">Gneiting (2007)</a>.
+            </p>
+            <p class="fragment note-below">"A proper scoring rule cannot be gamed"</p>
+          </section>
+
+          <section>
+            <h3>Example For An Improper Scoring Rule</h3>
+            <p>
+              A financial analyst is tasked with forecasting the next day's percentage change for a particular stock
+            </p>
+            <div class="fragment">
+              <p>
+                The score is the value of the forecasted distribution curve at the point of the actual outcome. Higher
+                is better.
+              </p>
+              <p class="note-below">"How likely did you say the actual outcome was?"</p>
+            </div>
+            <p class="fragment">The forecaster's honest belief is $\mathcal{N}(0.03, 0.07^2)$</p>
+            <div class="fragment">
+              <p>But the forecaster's is rewarded for reporting overconfidently, e.g. $\mathcal{N}(0.03, 0.01^2)$</p>
+              <p class="note-below">Imagine the output was 0.031</p>
+            </div>
+            <p class="fragment">This is not the same as the log score, which is proper.</p>
+          </section>
+        </section>
+
+        <!-- ======================================================================================================= -->
+
+        <section>
+          <h3>Equivalent CRPS Formulations</h3>
+          <a href="content/papers/Zamo_Naveau_2018.pdf">Zamo & Naveau (2018)</a>
+          <p style="font-size: 80%">
+            $X$ &ensp; forecast's random variable &emsp;&emsp;&emsp; $F$ &ensp; forecast's CDF &emsp;&emsp;&emsp; $y$
+            &ensp; observed variable
+          </p>
+          <p style="margin-bottom: 40px">
+            $$ \CRPS_{\text{int}}(F, y) = \int_{-\infty}^{\infty} \big( F(x) - \mathbb{1}_{x \ge y} \big)^2 dx $$
+          </p>
+          <p class="fragment">
+            $$ \CRPS_{\text{pwm}}(F, y) = \mathbb{E}_{X} \big[|X - y| \big] + \mathbb{E}_{X} \big[X \big] - 2
+            \mathbb{E}_{X} \big[X F(X) \big] $$
+          </p>
+          <div class="r-stack">
+            <p class="fragment fade-in-then-out" style="margin: 0; text-align: center">
+              $$ \CRPS_{\text{nrg}}(F, y) = \mathbb{E}_{X} \big[|X - y| \big] - \frac{1}{2} \mathbb{E}_{X,X'} \big[ |X -
+              X'| \big] \vphantom{\underbrace{\mathbb{E}_{X} \big[|X - y| \big]}_{\text{accuracy} = A} - \frac{1}{2}
+              \underbrace{\mathbb{E}_{X,X'} \big[ |X - X'| \big]}_{\text{dispersion} = D}} $$
+            </p>
+            <p class="fragment" style="margin: 0; text-align: center">
+              $$ \CRPS_{\text{nrg}}(F, y) = \underbrace{\mathbb{E}_{X} \big[|X - y| \big]}_{\text{accuracy} = A} -
+              \frac{1}{2} \underbrace{\mathbb{E}_{X,X'} \big[ |X - X'| \big]}_{\text{dispersion} = D} $$
+            </p>
+          </div>
+        </section>
+
+        <!-- ======================================================================================================= -->
+
+        <section>
+          <section>
+            <h3>The CRPS As Generalization Of The MAE</h3>
+            <p>
+              The CRPS can be seen as a generalization of the Mean Absolute Error (MAE) for probabilistic forecasts,
+              <br />
+              since <span class="highlight-blue">$D = 0$ for a deterministic forecaster</span>.
+            </p>
+            <p>
+              $$ \CRPS(F, y) = \underbrace{\mathbb{E}_{X} \big[|X - y| \big]}_{\text{accuracy = MAE}} - \frac{1}{2} D $$
+            </p>
+          </section>
+
+          <section>
+            <h3>CRPS Is a Generalization of the Brier Score to Continuous Variables</h3>
+            <p>$$\text{BS} = \frac{1}{N} \sum_{i=1}^{N} \big(x_i - \mathbb{1}(y_i = 1) \big)^2 $$</p>
+            <table class="compact-table" style="font-size: 80%">
+              <tbody>
+                <tr>
+                  <td>$x_i$</td>
+                  <td>i-th forecast</td>
+                </tr>
+                <tr>
+                  <td>$y_i$</td>
+                  <td>i-th observed binary value (ground truth)</td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h3>The CRPS As The Integral Of The Quantile Loss</h3>
+            <a href="content/papers/Gneiting_2007.pdf">Gneiting (2007)</a>
+            <p>
+              While the
+              <span class="highlight-blue">quantile loss evaluates a single slice of the CDF $F$</span>, the
+              <span class="highlight-blue">CRPS evaluates the entire $F$ </span> by evaluating the loss at every
+              possible quantile $q_{\alpha} = F^{-1}(\alpha)$.
+            </p>
+            <p>$$ \CRPS(F, y) = 2 \int_{0}^{1} \QL_{\alpha}(y, q_{\alpha}) \, d\alpha $$</p>
+          </section>
+
+          <section>
+            <h3>The Quantile Loss</h3>
+            <p>
+              The quantile loss for a level $\alpha \in [0, 1]$ evaluates the predicted quantile $q_\alpha =
+              F^{-1}(\alpha)$ is
+            </p>
+            <p>
+              $$ \begin{align*} \QL_{\alpha}(y, x) &= \begin{cases} \alpha (y - x) & \text{if } y \geq x \\ (1 - \alpha)
+              (x - y) & \text{if } y < x \end{cases} \\ &= (y - x) \big( \alpha \mathbb{1}_{y \geq x} - (1 - \alpha)
+              \mathbb{1}_{y < x} \big) \\ &= (y - x) (\alpha - \mathbb{1}_{y < x}) \end{align*} $$
+            </p>
+            <p>Thus for the median it is: $ \QL_{\alpha = 0.5}(y, x) = 0.5 |y - x| $</p>
+          </section>
+        </section>
+
+        <!-- ======================================================================================================= -->
+
+        <section>
+          <!-- <h3>Application of the CRPS</h3> -->
+          <img src="content/images/lets_find_a_problem.jpg" style="width: auto; height: 300px; border-radius: 15px" />
+        </section>
+
+        <section>
+          <h3>CRPS For Time Series Data</h3>
+          <p style="margin-bottom: 0px">
+            Consider <span class="highlight-blue">Bayesian regression</span> with data of shape of (B, T, C).
+          </p>
+          <div class="flex-container-row">
+            <div class="flex-container-col">
+              <p>inputs/targets</p>
+              <object
+                type="image/svg+xml"
+                data="content/images/time_series_data.svg"
+                class="full-svg"
+                style="width: auto; height: 20vh; border-radius: 15px"
+              ></object>
+            </div>
+            <div class="flex-container-col fragment">
+              <p>predictions</p>
+              <object
+                type="image/svg+xml"
+                data="content/images/time_series_prediction.svg"
+                class="full-svg"
+                style="width: auto; height: 20vh; border-radius: 15px"
+              ></object>
+            </div>
+          </div>
+          <p class="fragment" style="margin-top: 40px">
+            The most common solution is to <span class="highlight-blue">evaluate</span> all B &middot; T &middot; C
+            datapoints <span class="highlight-blue">independently</span>, i.e., takeing the mean over all.
+          </p>
+        </section>
+
+        <section>
+          <h3>CRPS For Time Series Data</h3>
+          <p>
+            The most common solution is to <span class="highlight-blue">evaluate</span> all B &middot; T &middot; C
+            datapoints <span class="highlight-blue">independently</span>, i.e., takeing the mean over all.
+          </p>
+          <p class="fragment">The batch dim is <span class="highlight-green">independent by construction.</span></p>
+          <p class="fragment" style="margin-bottom: 0px">
+            The channel dim is
+            <span class="highlight-green">treated as independent for simplicity.</span>
+          </p>
+          <p class="fragment" style="margin-top: 0px">
+            There is a multi-variate extension.
+            <a href="https://arxiv.org/abs/2410.09133">Zheng & Sun (2025)</a>
+          </p>
+          <div class="fragment">
+            <p>
+              The time dim is
+              <span class="highlight-green">generally treated as independent for scores.</span>
+            </p>
+            <p class="note-below">(the model's forecast can still have sequential dependencies)</p>
+          </div>
+        </section>
+
+        <!-- ======================================================================================================= -->
+
+        <section>
+          <h3>CRPS For Time Series Data</h3>
+          <p>Do you notice something about the value range?</p>
+          <p>$$ \CRPS_{\text{int}}(F, y) = \int_{-\infty}^{\infty} \big( F(x) - \mathbb{1}_{x \ge y} \big)^2 dx $$</p>
+          <p>
+            $$ \CRPS_{\text{nrg}}(F, y) = \mathbb{E}_{X} \big[|X - y| \big] - \frac{1}{2} \mathbb{E}_{X,X'} \big[ |X -
+            X'| \big]$$
+          </p>
+          <div class="fragment shrink" data-fragment-index="3">
+            <div class="fragment" data-fragment-index="1">
+              <p class="fragment grow highlight-red" data-fragment-index="2">
+                The CRPS depends on the scale of the random variable.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section>
+          <section>
+            <h3>Scale-Variance Is A Problem</h3>
+            <p>Training a ML model with a loss that scales with the forecast's magnitude is unfavorable.</p>
+            <p class="note-below">Consider a change of unit: kilogram &rarr; gram</p>
+            <p class="fragment">
+              <span class="highlight-red">
+                We would need to re-scale each channel individually, <br />
+                or live with an implicit bias.
+              </span>
+            </p>
+            <div class="fragment">
+              <p>This problem is particularly pronounced for time series data.</p>
+              <p class="note-below">
+                The values of RGB images are in [0, 255] <br />
+                Natural languages have a finite set of words
+              </p>
+            </div>
+          </section>
+
+          <section>
+            <h3>Scale-Invariance Of The NLL</h3>
+            <p>For example for a univariate normal distribution, the NLL at the observation $y$ is</p>
+            <p>$$\text{NLL}(F_{\mu,\sigma}, y) = - \log(\sigma) + \frac{(y - \mu)^2}{2 \sigma^2}$$</p>
+            <a
+              class="note-below"
+              href="https://stats.stackexchange.com/questions/521091/optimizing-gaussian-negative-log-likelihood"
+            >
+              link to derivation of NLL for normal distribution
+            </a>
+            <p>It is locally-scale invariant because of the division by $\sigma^2$</p>
+          </section>
+        </section>
+
+        <!-- ======================================================================================================= -->
+
+        <section>
+          <section>
+            <h3>Locally Scale-Invariant CRPS (SCRPS)</h3>
+            <a href="content/papers/Bolin_Wallin_2025.pdf">Bolin & Wallin (2025)</a>
+            <div class="r-stack">
+              <p class="fragment">
+                $$ \begin{align*} \SCRPS(F, y) &= \frac{\mathbb{E}_X\big[|X - y| \big]} {\mathbb{E}_{X,X'} \big[ |X -
+                X'| \big]} + \frac{1}{2} \log \big( \mathbb{E}_{X,X'} \big[ |X - X'| \big] \big) \\[2ex] &\phantom{=
+                \frac{A}{D} + \frac{1}{2} \log(D)} \\[2ex] \phantom{\CRPS(F, y)} &\phantom{= A - \frac{1}{2} D}
+                \end{align*}$$
+              </p>
+              <p class="fragment">
+                $$ \begin{align*} \SCRPS(F, y) &= \frac{\mathbb{E}_X\big[|X - y| \big]} {\mathbb{E}_{X,X'} \big[ |X -
+                X'| \big]} + \frac{1}{2} \log \big( \mathbb{E}_{X,X'} \big[ |X - X'| \big] \big) \\[2ex] &= \frac{A}{D}
+                + \frac{1}{2} \log(D) \\[2ex] \phantom{\CRPS(F, y)} &\phantom{= A - \frac{1}{2} D} \end{align*}$$
+              </p>
+              <p class="fragment">
+                $$ \begin{align*} \SCRPS(F, y) &= \frac{\mathbb{E}_X\big[|X - y| \big]} {\mathbb{E}_{X,X'} \big[ |X -
+                X'| \big]} + \frac{1}{2} \log \big( \mathbb{E}_{X,X'} \big[ |X - X'| \big] \big) \\[2ex] &= \frac{A}{D}
+                + \frac{1}{2} \log(D) \\[2ex] \CRPS(F, y) &= A - \frac{1}{2} D \end{align*}$$
+              </p>
+            </div>
+            <!-- <p class="fragment">The SCRPS can, in contrast to the CRPS, become negative.</p> -->
+          </section>
+
+          <section>
+            <h3>Local Scale-Invariance In A Nutshell</h3>
+            <p style="width: 75%; position: relative; left: 50%; transform: translateX(-50%)">
+              Being locally scale-invariant means to adjusts the score based on the predictive uncertainty for that
+              specific observation.
+            </p>
+          </section>
+
+          <section>
+            <h3>Example For Local Scale-Invariance</h3>
+            <p style="font-size: 80%">
+              A fruit growing contest for watermelons ($\mu_w = 10 kg$ , $\sigma_w = 2 kg$) and apples ($\mu_a = 200 g$
+              , $\sigma_a = 10 g$). The goal is to produce average-sized fruits.
+            </p>
+            <table style="font-size: 80%">
+              <tbody>
+                <tr class="fragment">
+                  <td><span class="highlight-blue">no invariance:</span> absolute error</td>
+                  <td>
+                    The Watermelon farmer is penalized more, simply because their fruit is bigger. Imagine a difference
+                    of 200 g.
+                  </td>
+                </tr>
+                <tr class="fragment">
+                  <td><span class="highlight-blue">global invariance:</span> absolute percentage error</td>
+                  <td>
+                    The Apple farmer is penalized more, as we moved to comparing ratios. Imagine a difference of 10 g.
+                  </td>
+                </tr>
+                <tr class="fragment">
+                  <td><span class="highlight-blue">local invariance:</span> absolute error / standard deviation</td>
+                  <td>
+                    The farmers are judged by how impressive the accuracy is relative to the difficulty of their
+                    specific fruit.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+        </section>
+
+        <section>
+          <h3>Local Scale-(In)variance</h3>
+          <img
+            src="content/plots/visualization_normal.png"
+            style="height: 35vh; border-radius: 15px; margin-top: 0px"
+          />
+          <p class="note-below">Imagine a 2nd variable with $\mathcal{N}(\mu=1, \sigma=0.02)$.</p>
+        </section>
+
+        <!-- ======================================================================================================= -->
+
+        <section>
+          <section>
+            <h3>An Illustrative Example</h3>
+            <img
+              src="content/plots/visualization_gamma.png"
+              style="height: 35vh; border-radius: 15px; margin-top: 0px"
+            />
+            <p class="note-below">
+              The (S)CRPS for the Gamma distribution was estimated from samples. <br />
+              Their minima are generally not at the same location.
+            </p>
+          </section>
+
+          <section>
+            <h3>CRPS vs. NLL</h3>
+            <p style="font-size: 85%">A trade-off between computational simplicity and expressive power.</p>
+            <table class="compact-table" style="font-size: 70%">
+              <thead>
+                <tr>
+                  <th style="width: 20%"></th>
+                  <th style="width: 40%">CRPS</th>
+                  <th style="width: 40%">NLL</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Focus</strong></td>
+                  <td>
+                    Provides a <span class="highlight-blue">holistic view</span> of forecast quality, rewarding both
+                    calibration and overall sharpness.
+                  </td>
+                  <td>
+                    Focuses on the forecast's performance at the
+                    <span class="highlight-blue">one specific point</span> that occurred.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Robustness</strong></td>
+                  <td>
+                    Less sensitive to single, surprising "black swan" events as it integrates over all possibilities.
+                  </td>
+                  <td>A single outcome in a low-probability region can cause the score to explode towards infinity.</td>
+                </tr>
+                <tr>
+                  <td><strong>Interpretability</strong></td>
+                  <td>Score is in the <span class="highlight-blue">same units</span> as the observation.</td>
+                  <td>
+                    Score is in abstract "nats" or "bits", and has
+                    <span class="highlight-blue">no intuitive meaning</span>.
+                  </td>
+                </tr>
+                <tr>
+                  <td><strong>Computation</strong></td>
+                  <td>
+                    Simple if a closed-form solution exists.
+                    <span class="highlight-blue">Can be intensive</span> if numerical integration is needed.
+                  </td>
+                  <td>
+                    <span class="highlight-blue">Generally simple and fast</span>, as it only requires evaluating the
+                    PDF at a single point.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </section>
+        </section>
+
+        <!-- ======================================================================================================= -->
+
+        <section>
+          <h3>How To Use The (S)CRPS In Your Work?</h3>
+          <div class="fragment">
+            <a href="https://github.com/famura/torch-crps">
+              <img src="content/images/github_repo.png" style="width: 800px; border-radius: 15px" />
+            </a>
+            <p style="font-family: monospace">pip install torch-crps</p>
+            <!-- <p class="note-below fragment">torch >= 2.7 is the only dependency</p> -->
+          </div>
+        </section>
+
+        <section>
+          <h3>What Is In The torch-crps Package?</h3>
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th colspan="3" style="text-align: center">Type of forecasting distribution $F(X)$</th>
+              </tr>
+              <tr>
+                <th></th>
+                <th style="text-align: center">Normal</th>
+                <th style="text-align: center">StudentT</th>
+                <th style="text-align: center">any sampleable</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>CRPS</td>
+                <td class="highlight-green" style="text-align: center">&#10003;</td>
+                <td class="highlight-orange" style="text-align: center">&#10003;</td>
+                <td class="highlight-green" style="text-align: center">&#10003;</td>
+              </tr>
+              <tr>
+                <td>SCRPS</td>
+                <td class="highlight-orange" style="text-align: center">&#10003;</td>
+                <td class="highlight-red" style="text-align: center">&#10003;</td>
+                <td class="highlight-orange" style="text-align: center">&#10003;</td>
+              </tr>
+            </tbody>
+          </table>
+          <table style="font-size: 80%; margin-top: 30px">
+            <tr>
+              <td class="highlight-green">&#10003;</td>
+              <td>frequently available <span class="highlight-grey">(in popular libraries)</span></td>
+            </tr>
+            <tr>
+              <td class="highlight-orange">&#10003;</td>
+              <td>rarely available <span class="highlight-grey">(almost exclusively in R)</span></td>
+            </tr>
+            <tr>
+              <td class="highlight-red">&#10003;</td>
+              <td>available only in the torch-crps package</td>
+            </tr>
+          </table>
+        </section>
+
+        <!-- ======================================================================================================= -->
+
+        <section>
+          <h3 style="margin-bottom: 0px">Implementation Validation</h3>
+          <svg viewBox="0 0 1000 550" style="width: 100%; height: 500px">
+            <defs>
+              <marker
+                id="beginendmarker"
+                viewBox="0 0 10 10"
+                refX="5"
+                refY="5"
+                markerWidth="3"
+                markerHeight="3"
+                orient="auto"
+              >
+                <circle cx="5" cy="5" r="4" fill="rgb(189, 236, 182)" />
+              </marker>
+            </defs>
+
+            <!-- LEVEL 0: Start State -->
+            <g>
+              <foreignObject x="200" y="0" width="700" height="90">
+                <div
+                  xmlns="http://www.w3.org/1999/xhtml"
+                  class="flow-box"
+                  style="flex-direction: column; width: max-content"
+                >
+                  <p style="margin: 0; font-family: monospace">crps_integral()</p>
+                  <p style="margin: 0">
+                    $\text{CRPS}(F, y) = \int_{-\infty}^{\infty} \big( F(x) - 1_{x \ge y} \big)^2 dx = A - 0.5 D$
+                  </p>
+                </div>
+              </foreignObject>
+            </g>
+
+            <!-- LEVEL 1: CRPS functions -->
+            <g id="frag1" class="fragment">
+              <foreignObject x="150" y="150" width="400" height="50">
+                <div
+                  xmlns="http://www.w3.org/1999/xhtml"
+                  class="flow-box"
+                  style="flex-direction: column; width: max-content"
+                >
+                  <p style="margin: 0; font-family: monospace">crps_analytical_normal()</p>
+                </div>
+              </foreignObject>
+              <foreignObject x="150" y="205" width="420" height="50">
+                <div
+                  xmlns="http://www.w3.org/1999/xhtml"
+                  class="flow-box"
+                  style="flex-direction: column; width: max-content"
+                >
+                  <p style="margin: 0; font-family: monospace">crps_analytical_studentt()</p>
+                </div>
+              </foreignObject>
+              <foreignObject x="150" y="260" width="420" height="50">
+                <div
+                  xmlns="http://www.w3.org/1999/xhtml"
+                  class="flow-box"
+                  style="flex-direction: column; width: max-content"
+                >
+                  <p style="margin: 0; font-family: monospace">crps_ensemble()</p>
+                </div>
+              </foreignObject>
+              <line
+                x1="330"
+                y1="90"
+                x2="330"
+                y2="150"
+                class="flow-line"
+                marker-start="url(#beginendmarker)"
+                marker-end="url(#beginendmarker)"
+              />
+            </g>
+
+            <!-- LEVEL 2: CRPS papers -->
+            <g id="frag2" class="fragment">
+              <foreignObject x="100" y="385" width="300" height="50">
+                <div
+                  xmlns="http://www.w3.org/1999/xhtml"
+                  class="flow-box"
+                  style="flex-direction: column; width: max-content"
+                >
+                  <p>
+                    <a href="https://docs.nvidia.com/physicsnemo/25.11/_modules/physicsnemo/metrics/general/crps.html"
+                      >Nvidia (2025)</a
+                    >
+                  </p>
+                </div>
+              </foreignObject>
+              <foreignObject x="50" y="440" width="300" height="50">
+                <div
+                  xmlns="http://www.w3.org/1999/xhtml"
+                  class="flow-box"
+                  style="flex-direction: column; width: max-content"
+                >
+                  <p><a href="content/papers/Jordan_2019.pdf">Jordan et al. (2019)</a></p>
+                </div>
+              </foreignObject>
+              <foreignObject x="0" y="495" width="300" height="50">
+                <div
+                  xmlns="http://www.w3.org/1999/xhtml"
+                  class="flow-box"
+                  style="flex-direction: column; width: max-content"
+                >
+                  <p><a href="content/papers/Gneiting_2007.pdf">Gneiting (2007)</a></p>
+                </div>
+              </foreignObject>
+              <!-- horizontal lines from the CRPS function to the papers-->
+              <line x1="150" y1="175" x2="23.5" y2="175" class="flow-line" marker-start="url(#beginendmarker)" />
+              <line x1="150" y1="230" x2="73.5" y2="230" class="flow-line" marker-start="url(#beginendmarker)" />
+              <line
+                x1="150"
+                y1="285"
+                x2="123.5"
+                y2="285"
+                class="flow-line"
+                stroke-dasharray="6, 4"
+                marker-start="url(#beginendmarker)"
+              />
+              <!-- vertical lines from the CRPS function to the papers-->
+              <line x1="25" y1="175" x2="25" y2="495" class="flow-line" marker-end="url(#beginendmarker)" />
+              <line x1="75" y1="230" x2="75" y2="440" class="flow-line" marker-end="url(#beginendmarker)" />
+              <line
+                x1="125"
+                y1="285"
+                x2="125"
+                y2="385"
+                class="flow-line"
+                stroke-dasharray="6, 4"
+                marker-end="url(#beginendmarker)"
+              />
+            </g>
+
+            <!-- LEVEL 3: A & D term -->
+            <g id="frag3" class="fragment">
+              <foreignObject x="685" y="150" width="140" height="50">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="flow-box" style="width: max-content">
+                  <p style="margin: 0">$A$ and $D$</p>
+                </div>
+              </foreignObject>
+              <line
+                x1="520"
+                y1="175"
+                x2="685"
+                y2="175"
+                class="flow-line"
+                marker-start="url(#beginendmarker)"
+                marker-end="url(#beginendmarker)"
+              />
+              <line x1="550" y1="230" x2="620" y2="230" class="flow-line" marker-start="url(#beginendmarker)" />
+              <line x1="620" y1="231.5" x2="620" y2="175" class="flow-line" />
+            </g>
+
+            <!-- LEVEL 4: SCRPS functions -->
+            <g id="frag4" class="fragment">
+              <foreignObject x="555" y="320" width="450" height="60">
+                <div xmlns="http://www.w3.org/1999/xhtml" class="flow-box" style="width: max-content">
+                  <p style="margin: 0">$\text{SCRPS}(F,y) = A/D + 0.5 \log(D) $</p>
+                </div>
+              </foreignObject>
+              <foreignObject x="555" y="385" width="400" height="50">
+                <div
+                  xmlns="http://www.w3.org/1999/xhtml"
+                  class="flow-box"
+                  style="flex-direction: column; width: max-content"
+                >
+                  <p style="margin: 0; font-family: monospace">scrps_analytical_normal()</p>
+                </div>
+              </foreignObject>
+              <foreignObject x="555" y="440" width="420" height="50">
+                <div
+                  xmlns="http://www.w3.org/1999/xhtml"
+                  class="flow-box"
+                  style="flex-direction: column; width: max-content"
+                >
+                  <p style="margin: 0; font-family: monospace">scrps_analytical_studentt()</p>
+                </div>
+              </foreignObject>
+              <foreignObject x="555" y="495" width="420" height="50">
+                <div
+                  xmlns="http://www.w3.org/1999/xhtml"
+                  class="flow-box"
+                  style="flex-direction: column; width: max-content"
+                >
+                  <p style="margin: 0; font-family: monospace">scrps_ensemble()</p>
+                </div>
+              </foreignObject>
+              <line
+                x1="745"
+                y1="200"
+                x2="745"
+                y2="320"
+                class="flow-line"
+                marker-start="url(#beginendmarker)"
+                marker-end="url(#beginendmarker)"
+              />
+            </g>
+          </svg>
+        </section>
+
+        <!-- ======================================================================================================= -->
+
+        <section>
+          <h3>Implementation Details</h3>
+          <p>
+            How to implement $ \CRPS(F, y) = \mathbb{E}_{X} \big[|X - y| \big] - \frac{1}{2} \mathbb{E}_{X,X'} \big[ |X
+            - X'| \big] ?$
+          </p>
+          <p class="fragment">$A = \mathbb{E}_{X} \big[|X - y| \big]$ is trivial,</p>
+          <p class="fragment">$D = \mathbb{E}_{X,X'} \big[ |X - X'| \big]$ is not.</p>
+        </section>
+
+        <section>
+          <h3>Implementation Details</h3>
+          <pre><code data-trim data-line-numbers="1-9|10-14|16-17|19-22" class="language-python">
+            def dispersion_ensemble_naive(x: torch.Tensor) -> torch.Tensor:
+            """Compute dispersion term $D = E[|X - X'|]$ for an ensemble forecast.
+
+            Args:
+                x: The ensemble predictions, of shape (*batch_shape, dim_ensemble).
+
+            Returns:
+                Dispersion values for each observation, of shape (*batch_shape).
+            """
+            # Create a matrix of all pairwise differences between the
+            # m ensemble members.
+            x_i = x.unsqueeze(-1)  # shape: (*batch_shape, m, 1)
+            x_j = x.unsqueeze(-2)  # shape: (*batch_shape, 1, m)
+            pairwise_diffs = x_i - x_j  # shape: (*batch_shape, m, m)
+
+            # Take the absolute value of every element in the matrix.
+            abs_pairwise_diffs = torch.abs(pairwise_diffs)  # shape: (*batch_shape, m, m)
+
+            # Calculate the mean of the m x m matrix for each batch item, i.e,
+            # not the batch shapes. This divides by m².
+            dispersion = abs_pairwise_diffs.mean(dim=(-2, -1))  # shape: (*batch_shape)
+            return dispersion
+          </code></pre>
+        </section>
+
+        <section>
+          <h3>Implementation Details</h3>
+          <p>What is the computational complexity of these steps?</p>
+          <pre><code data-trim data-line-numbers="5,8" data-ln-start-from="10" class="language-python">
+            # Create a matrix of all pairwise differences between the
+            # m ensemble members.
+            x_i = x.unsqueeze(-1)  # shape: (*batch_shape, m, 1)
+            x_j = x.unsqueeze(-2)  # shape: (*batch_shape, 1, m)
+            pairwise_diffs = x_i - x_j  # shape: (*batch_shape, m, m)
+
+            # Take the absolute value of every element in the matrix.
+            abs_pairwise_diffs = torch.abs(pairwise_diffs) # shape: (*batch_shape, m, m)
+          </code></pre>
+          <p class="fragment">It is <span class="highlight-red">O(m²)</span> for each batch item.</p>
+          <p class="fragment">
+            We can do the same in <span class="highlight-green">O(m log(m))</span> when exploiting the symmetry of the
+            $D$ matrix
+            <a href="https://docs.nvidia.com/physicsnemo/25.11/_modules/physicsnemo/metrics/general/crps.html"
+              >Nvidia (2025)</a
+            >.
+          </p>
+        </section>
+
+        <section>
+          <section>
+            <h3>Implementation Details</h3>
+
+            <pre><code data-trim data-line-numbers="10-11|13-16|18-20|22-25" class="language-python">
+            def dispersion_ensemble(x: torch.Tensor) -> torch.Tensor:
+            """Compute dispersion term $D = E[|X - X'|]$ for an ensemble forecast.
+
+            Args:
+                x: The ensemble predictions, of shape (*batch_shape, dim_ensemble).
+
+            Returns:
+                Dispersion values for each observation, of shape (*batch_shape).
+            """
+            # Sort the predictions along the ensemble member dimension.
+            x_sorted, _ = torch.sort(x, dim=-1)
+
+            # Calculate the coefficients (2i - m - 1) for the linear-time sum.
+            # These are the same for every item in the batch.
+            m = x.shape[-1]  # number of ensemble members
+            coeffs = 2 * torch.arange(1, m + 1, device=x.device) - m - 1
+
+            # Calculate the sum Σᵢ (2i - m - 1)xᵢ for each forecast in the batch
+            # along the member dimension. This only sums over a single dimension.
+            x_sum = torch.sum(coeffs * x_sorted, dim=-1)
+
+            # Calculate the full expectation E[|X - X'|] = 2 / m² * Σᵢ (2i - m - 1)xᵢ.
+            # This is half the mean absolute difference between all pairs of predictions.
+            dispersion = 2 * x_sum / m**2
+            return dispersion
+          </code></pre>
+          </section>
+
+          <section>
+            <h3>From O(M²) to O(M log(M))</h3>
+            <div class="r-stack">
+              <div class="fragment fade-in-then-out">
+                <p>The problem: naive double summation</p>
+                $$ \mathbb{E}\big[|X - X'|\big] = \frac{1}{M^2} \sum_{i=1}^{M} \sum_{j=1}^{M} |x_i - x_j|$$
+              </div>
+              <div class="fragment fade-in-then-out">
+                <p>The insight: sort the ensemble</p>
+                <p>$$ \tilde{x}_1 \le \tilde{x}_2 \le \dots \le \tilde{x}_M $$</p>
+                <p>Due to symmetry, we can write</p>
+                <p>
+                  $$ \mathbb{E}\big[|X - X'|\big] = \frac{2}{M^2} \underbrace{\sum_{1 \le i < j \le M}}_{\text{ upper
+                  triangle}} |\tilde{x}_i - \tilde{x}_j| = \frac{2}{M^2} \sum_{1 \le i < j \le M}
+                  \underbrace{(\tilde{x}_j - \tilde{x}_i)}_{\ge 0}$$
+                </p>
+                <p class="note-below">
+                  By sorting the ensemble members $\tilde{x}$, we can remove the absolute value, since for $i < j$, we
+                  know $\tilde{x}_j \ge \tilde{x}_i$.
+                </p>
+              </div>
+              <div class="fragment fade-in-then-out">
+                <p>$$\sum_{1 \le i < j \le M} (\tilde{x}_j - \tilde{x}_i) \quad \text{for} \quad M=4$$</p>
+                <table style="text-align: center">
+                  <thead>
+                    <tr>
+                      <th></th>
+                      <th>$j=1$</th>
+                      <th>$j=2$</th>
+                      <th>$j=3$</th>
+                      <th>$j=4$</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th>$i=1$</th>
+                      <td>0</td>
+                      <td>$x'_{1} - x'_{2}$</td>
+                      <td>$x'_{1} - x'_{3}$</td>
+                      <td>$x'_{1} - x'_{4}$</td>
+                    </tr>
+                    <tr>
+                      <th>$i=2$</th>
+                      <td>.</td>
+                      <td>0</td>
+                      <td>$x'_{2} - x'_{3}$</td>
+                      <td>$x'_{2} - x'_{4}$</td>
+                    </tr>
+                    <tr>
+                      <th>$i=3$</th>
+                      <td>.</td>
+                      <td>.</td>
+                      <td>0</td>
+                      <td>$x'_{3} - x'_{4}$</td>
+                    </tr>
+                    <tr>
+                      <th>$i=4$</th>
+                      <td>.</td>
+                      <td>.</td>
+                      <td>.</td>
+                      <td>0</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="fragment fade-in-then-out">
+                <p>We expand the sum and count how many times each sorted element $\tilde{x}_k$ appears.</p>
+                <p>
+                  $$ \sum_{1 \le i < j \le M} (\tilde{x}_j - \tilde{x}_i) = \sum_{k=1}^{M} (\text{count}(+\tilde{x}_k) -
+                  \text{count}(-\tilde{x}_k)) \cdot \tilde{x}_k \\ \text{1. } \tilde{x}_k \text{ is added } (k-1) \text{
+                  times (when } j=k, i < k). \\ \text{2. } \tilde{x}_k \text{ is subtracted } (M-k) \text{ times (when }
+                  i=k, j > k). \\ \text{The coefficient for } \tilde{x}_k \text{ is } (k-1) - (M-k) = 2k - M - 1. $$
+                </p>
+              </div>
+              <div class="fragment fade-in-then-out">
+                <p>This gives a final formula with O(M log(M)) complexity, dominated by the initial sort.</p>
+                <p>$$ \mathbb{E}\big[|X - X'|\big] = \frac{2}{M^2} \sum_{k=1}^{M} (2k - M - 1) \tilde{x}_k $$</p>
+              </div>
+            </div>
+          </section>
+        </section>
+
+        <!-- ======================================================================================================= -->
+
+        <section>
+          <img src="content/images/always_has_been.jpeg" style="height: 400px; border-radius: 15px" />
+        </section>
+
+        <section>
+          <h3>Summary</h3>
+          <ul>
+            <li class="fragment">
+              The CRPS is a <span class="highlight-blue">strictly proper scoring rule</span> for evaluating
+              probabilistic forecasts.
+            </li>
+            <li class="fragment">
+              It is <span class="highlight-blue">used in top-tier publications</span> and benchmarks.
+            </li>
+            <li class="fragment">
+              It is <span class="highlight-blue">scale-variant</span>, which is problematic for time series data.
+            </li>
+            <li class="fragment">
+              The SCRPS is a <span class="highlight-blue">locally scale-invariant version</span> of the CRPS.
+            </li>
+            <li class="fragment">
+              Both scores are implemented in the
+              <span class="highlight-blue">torch-crps</span> package.
+            </li>
+          </ul>
+        </section>
+
+        <!-- ======================================================================================================= -->
+      </div>
+      <!-- slides -->
+    </div>
+    <!-- reveal -->
+
+    <footer class="deck-footer">Fabio Muratore &ensp;|&ensp; 2026-03-26</footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/search/search.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/zoom/zoom.js"></script>
+    <script>
+      Reveal.initialize({
+        controls: true,
+        controlsLayout: "edges",
+        progress: true,
+        history: true,
+        center: true,
+        transition: "slide",
+        slideNumber: "h.v",
+        viewDistance: 3,
+        pdfMaxPagesPerSlide: 1,
+
+        mathjax2: {
+          mathjax: "https://cdn.jsdelivr.net/gh/mathjax/mathjax@2.7.8/MathJax.js",
+          config: "TeX-AMS_HTML-full",
+          TeX: {
+            Macros: {
+              CRPS: "\\operatorname{CRPS}",
+              SCRPS: "\\operatorname{SCRPS}",
+              QL: "\\operatorname{QL}",
+            },
+          },
+          "HTML-CSS": { scale: 80 },
+        },
+
+        plugins: [RevealHighlight, RevealMath.MathJax2, RevealNotes, RevealSearch, RevealZoom],
+      });
+    </script>
+  </body>
+</html>
