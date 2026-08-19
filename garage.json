@@ -1,8 +1,15 @@
 [
   {
+    "name": "bezier-cdf",
+    "title": "Bezier CDF",
+    "description": "How to construct a CDF using B\u00e9zier curves",
+    "url": "presentations/bezier-cdf/",
+    "date": "2026-04-23"
+  },
+  {
     "name": "demo-pdf",
     "title": "PDF Demo",
-    "description": "The reveal.js demo as an exported PDF: five slides shown page by page, so exported presentations live in the garage too.",
+    "description": "A small demo presentation based on a PDF.",
     "url": "presentations/demo-pdf/",
     "date": "2026-08-18",
     "offline": "presentations/demo-pdf/slides.pdf"
@@ -10,8 +17,22 @@
   {
     "name": "demo-revealjs",
     "title": "reveal.js Demo",
-    "description": "A five-slide reveal.js demo presentation showing the layouts this garage ships with.",
+    "description": "A small demo presentation based the reveal.js framework.",
     "url": "presentations/demo-revealjs/",
     "date": "2026-08-18"
+  },
+  {
+    "name": "randomizing-physics-simulations-for-robot-learning",
+    "title": "Randomizing Physics Simulations for Robot Learning",
+    "description": "PhD Defense Talk",
+    "url": "presentations/randomizing-physics-simulations-for-robot-learning/",
+    "date": "2021-10-11"
+  },
+  {
+    "name": "scrps",
+    "title": "The Continuously-Ranked Probability Score",
+    "description": "Why the CRPS is the loss function for probabilistic forecasts, why its scale-variance hurts on time series data, and how the SCRPS fixes it.",
+    "url": "presentations/scrps/",
+    "date": "2026-03-26"
   }
 ]
