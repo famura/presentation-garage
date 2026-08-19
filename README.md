@@ -62,6 +62,7 @@ PDF presentations are published with their PDF, so their download works on GitHu
 - No shared theme: CSS, fonts, images, and the favicon live inside the presentation folder.
 - reveal.js and plugins load from a pinned CDN version, so there is nothing to install.
 - A PDF presentation is shipped via an `index.html` (a pdf.js viewer) plus the PDF file, see `presentations/demo-pdf/`.
+- Never edit `garage.json` by hand, it is generated from each presentation's `<title>` and `<meta>` tags, so edit those instead.
 
 ## Agent skills
 
