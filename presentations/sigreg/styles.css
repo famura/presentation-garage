@@ -1,0 +1,440 @@
+/* SIGReg presentation — self-contained styling.
+   Palette derived from the garage demo ("Sage & Terracotta") with boosted contrast. */
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --paper: #f4f1de; /* cream background */
+  --paper-panel: #ebe5cb; /* slightly darker card fill */
+  --ink: #1b1813; /* near-black text (darker than demo for contrast) */
+  --muted: #55514a; /* secondary text */
+  --line: rgba(27, 24, 19, 0.18);
+
+  --accent: #c5432a; /* terracotta — "empirical / before / current" */
+  --accent-soft: #e07a5f; /* lighter terracotta for fills */
+  --deep: #1e4a44; /* deep teal — "target / Gaussian / after" */
+  --deep-soft: #3d5a55;
+  --gold: #a8791e; /* rare tertiary accent */
+
+  --code-bg: #1d2b28;
+}
+
+/* ---------- base ---------- */
+.reveal {
+  color: var(--ink);
+  font-family: "Inter", Helvetica, Arial, sans-serif;
+  font-size: 26pt;
+  line-height: 1.35;
+}
+.reveal-viewport {
+  background: var(--paper);
+}
+
+.reveal h1,
+.reveal h2,
+.reveal h3 {
+  margin: 0 0 22pt;
+  color: var(--deep);
+  font-family: "Fraunces", Georgia, serif;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  text-transform: none;
+  line-height: 1.08;
+}
+.reveal h1 {
+  font-size: 52pt;
+}
+.reveal h2 {
+  font-size: 38pt;
+}
+.reveal h3 {
+  font-size: 23pt;
+  margin-bottom: 8pt;
+  color: var(--deep-soft);
+}
+
+.reveal section {
+  text-align: left;
+}
+.reveal section > .eyebrow + h2 {
+  margin-top: 0;
+}
+.reveal ul,
+.reveal ol {
+  margin-left: 26pt;
+}
+.reveal li {
+  margin-bottom: 12pt;
+}
+.reveal li::marker {
+  color: var(--accent);
+}
+.reveal strong {
+  color: var(--accent);
+  font-weight: 700;
+}
+.reveal em {
+  color: var(--deep-soft);
+  font-style: normal;
+  font-weight: 600;
+}
+.reveal a {
+  color: var(--deep);
+  text-decoration: underline solid var(--accent-soft);
+}
+
+/* ---------- eyebrow / section tag ---------- */
+.eyebrow {
+  margin: 0 0 12pt;
+  color: var(--accent);
+  font-size: 15pt;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.footnote {
+  margin-top: 18pt;
+  color: var(--muted);
+  font-size: 14pt;
+  line-height: 1.3;
+}
+.footnote a {
+  color: var(--muted);
+}
+
+/* ---------- title slide ---------- */
+.title-slide {
+  display: flex !important;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+  padding: 0 9%;
+  background: linear-gradient(
+    135deg,
+    var(--deep) 0%,
+    #14231f 58%,
+    var(--accent) 165%
+  );
+}
+.title-slide .eyebrow {
+  color: var(--accent-soft);
+}
+.title-slide h1 {
+  color: var(--paper);
+  font-size: 62pt;
+  max-width: 20ch;
+}
+.title-slide .subtitle {
+  margin: 0;
+  color: rgba(244, 241, 222, 0.9);
+  font-size: 26pt;
+  max-width: 38ch;
+}
+.title-slide .meta {
+  margin-top: 30pt;
+  color: rgba(244, 241, 222, 0.6);
+  font-size: 16pt;
+  line-height: 1.5;
+}
+.reveal .title-slide code {
+  background: rgba(244, 241, 222, 0.18);
+  color: var(--paper);
+}
+
+/* ---------- layout helpers ---------- */
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30pt;
+  align-items: start;
+}
+.columns.wide-left {
+  grid-template-columns: 1.35fr 1fr;
+}
+.columns.wide-right {
+  grid-template-columns: 1fr 1.35fr;
+}
+.stack-tight li {
+  margin-bottom: 8pt;
+}
+
+/* centered algorithm pipeline: step text + its equation, aligned in columns */
+.pipeline {
+  list-style: none;
+  counter-reset: step;
+  margin: 16pt auto 0;
+  padding: 0;
+  width: max-content;
+  max-width: 100%;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+  column-gap: 26pt;
+  row-gap: 18pt;
+}
+.pipeline li {
+  display: contents;
+}
+.pipeline .step-num {
+  justify-self: end;
+  color: var(--accent);
+  font-weight: 700;
+  counter-increment: step;
+}
+.pipeline .step-num::before {
+  content: counter(step);
+}
+.pipeline .step-text {
+  text-align: left;
+}
+.pipeline .step-eq {
+  justify-self: start;
+}
+
+.card {
+  padding: 20pt 22pt;
+  border: 1pt solid var(--line);
+  border-top: 5pt solid var(--deep);
+  border-radius: 10pt;
+  background: rgba(255, 255, 255, 0.5);
+}
+.card.accent {
+  border-top-color: var(--accent);
+}
+.card h3 {
+  margin-top: 0;
+}
+.card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 18pt;
+}
+
+/* legend chips reused across plots */
+.legend {
+  display: flex;
+  gap: 26pt;
+  margin: 6pt 0 0;
+  font-size: 17pt;
+  color: var(--muted);
+  flex-wrap: wrap;
+}
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8pt;
+}
+.swatch {
+  width: 26pt;
+  height: 6pt;
+  border-radius: 3pt;
+  display: inline-block;
+}
+.swatch.dash {
+  background: repeating-linear-gradient(
+    90deg,
+    currentColor 0 8pt,
+    transparent 8pt 14pt
+  );
+  height: 4pt;
+}
+.swatch.dot {
+  background-image: radial-gradient(
+    circle 1.2pt at center,
+    currentColor 99%,
+    transparent 100%
+  );
+  background-size: 5pt 100%;
+  background-repeat: repeat-x;
+  background-color: transparent;
+  height: 4pt;
+  opacity: 0.8;
+}
+.sw-accent {
+  background: var(--accent);
+  color: var(--accent);
+}
+.sw-deep {
+  background: var(--deep);
+  color: var(--deep);
+}
+
+/* stat / verdict badges */
+.verdict {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10pt;
+  padding: 6pt 14pt;
+  border-radius: 8pt;
+  font-size: 18pt;
+  font-weight: 600;
+}
+.verdict.accept {
+  background: rgba(30, 74, 68, 0.12);
+  color: var(--deep);
+}
+.verdict.reject {
+  background: rgba(197, 67, 42, 0.12);
+  color: var(--accent);
+}
+.verdict b {
+  font-size: 24pt;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- math (KaTeX) ---------- */
+.reveal .katex {
+  font-size: 1em;
+}
+.math-block {
+  margin: 16pt 0;
+  color: var(--ink);
+}
+.math-center {
+  text-align: center;
+}
+.eq-note {
+  color: var(--muted);
+  font-size: 15pt;
+}
+
+/* ---------- code ---------- */
+.reveal code {
+  padding: 1pt 6pt;
+  border-radius: 5pt;
+  background: rgba(30, 74, 68, 0.1);
+  font-family: "SFMono-Regular", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.82em;
+  color: var(--deep);
+}
+.reveal pre {
+  width: 100%;
+  margin: 0;
+  box-shadow: 0 8pt 24pt rgba(27, 24, 19, 0.14);
+}
+.reveal pre code {
+  padding: 18pt 22pt;
+  border-radius: 10pt;
+  background: var(--code-bg);
+  color: #e7e5db; /* light base so non-token text stays readable on dark bg */
+  font-size: 15pt;
+  line-height: 1.45;
+  max-height: none;
+}
+.reveal pre code .hljs-comment,
+.reveal pre code .hljs-quote {
+  color: #93a79e; /* readable sage for the teaching comments */
+  font-style: italic;
+}
+
+/* Cramér–Wold slice slide — keyed off the #cw-canvas id (not an HTML class) so
+   it survives edits to index.html. Pin the slide's top so the tall inline visual
+   can overflow into the lower whitespace instead of making Reveal re-center the
+   whole slide upward.
+   ponytail: magic top for one slide; revisit if the deck's design height changes. */
+.reveal .slides > section:has(#cw-canvas) {
+  top: 250px !important;
+}
+/* The visual's box is taller than the text, so its cloud sits below the text's
+   midline. Lift it (relative, no layout change) to center it against the text. */
+.reveal .slides > section:has(#cw-canvas) .columns > div:last-child {
+  position: relative;
+  top: -120px;
+}
+
+/* ---------- SVG plots / d3 ---------- */
+.plot {
+  width: 100%;
+}
+.plot text {
+  font-family: "Inter", sans-serif;
+  fill: var(--muted);
+}
+.axis path,
+.axis line {
+  stroke: rgba(27, 24, 19, 0.28);
+  shape-rendering: crispEdges;
+}
+
+/* ---------- interactive slider slide ---------- */
+.controls-row {
+  display: flex;
+  gap: 34pt;
+  margin-top: 10pt;
+  flex-wrap: wrap;
+}
+.control {
+  min-width: 210pt;
+}
+.control label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 17pt;
+  color: var(--muted);
+  margin-bottom: 4pt;
+}
+.control label b {
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+  height: 6pt;
+}
+.hint {
+  color: var(--muted);
+  font-size: 15pt;
+  margin-top: 6pt;
+}
+
+/* the big live EP readout */
+.ep-readout {
+  display: flex;
+  align-items: baseline;
+  gap: 12pt;
+  margin-top: 4pt;
+}
+.ep-readout .value {
+  font-family: "Fraunces", serif;
+  font-weight: 700;
+  font-size: 44pt;
+  font-variant-numeric: tabular-nums;
+  transition: color 0.15s ease;
+}
+.ep-readout .label {
+  color: var(--muted);
+  font-size: 17pt;
+}
+
+/* video */
+.video-wrap {
+  max-width: 1180px; /* keep the 16:9 clip ~665pt tall so header + caption fit */
+  margin: 0 auto;
+  border-radius: 12pt;
+  overflow: hidden;
+  box-shadow: 0 10pt 30pt rgba(27, 24, 19, 0.18);
+  border: 1pt solid var(--line);
+  background: var(--paper);
+}
+.video-wrap video {
+  display: block;
+  width: 100%;
+}
+
+/* ---------- reveal chrome ---------- */
+.reveal .progress {
+  color: var(--accent);
+  height: 4px;
+}
+.reveal .controls {
+  color: var(--deep);
+}
+.reveal .slide-number {
+  right: auto;
+  left: 12px;
+  bottom: 10px;
+  color: var(--muted);
+  background: transparent;
+  font-size: 13pt;
+}

@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Building a regularizer from the Epps–Pulley test that keeps a latent space from collapsing by pushing it toward an isotropic Gaussian"
+    />
+    <meta name="date" content="2026-09-03" />
+    <title>SIGReg</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%231e4a44'/><path d='M10 80 C40 80 37 24 50 24 C63 24 60 80 90 80' fill='none' stroke='%23e07a5f' stroke-width='8' stroke-linecap='round'/><circle cx='50' cy='52' r='6' fill='%23f4f1de'/></svg>"
+    />
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@11.9.0/styles/atom-one-dark.min.css" />
+    <link rel="stylesheet" href="styles.css?v=3" />
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides">
+        <!-- ============================ 1. TITLE ============================ -->
+        <section class="title-slide" data-background-color="#14231f">
+          <p class="eyebrow">How the latest world models are based on 50 year old math</p>
+          <h1>SIGReg</h1>
+          <p class="subtitle">
+            Building a regularizer from the Epps–Pulley test that keeps a latent space from collapsing by pushing it
+            toward an isotropic Gaussian.
+          </p>
+          <p class="meta">Technical Discussion 2026-09-03</p>
+        </section>
+
+        <!-- ==================== 2. EPPS–PULLEY: GOAL & SETUP ==================== -->
+        <section>
+          <p class="eyebrow">The tool we start from</p>
+          <h2>Epps–Pulley: a Gaussian detector</h2>
+          <div class="columns wide-left">
+            <div>
+              <p style="margin-top: 0">Given samples \(x_1,\dots,x_N\in\mathbb{R}\), accept or reject:</p>
+              <div class="verdict accept" style="margin: 8pt 0 16pt">
+                \(H_0\): the data were drawn from a <em>normal</em> distribution
+              </div>
+              <ul class="stack-tight">
+                <li>It never inspects a histogram directly.</li>
+                <li>
+                  Instead, it compares the sample's <strong>characteristic function</strong> (its Fourier fingerprint)
+                  against the Gaussian's. To be efficient, this is done over a small band of frequencies \(t\).
+                </li>
+                <li>Fingerprints far apart&nbsp;&rarr;&nbsp;large statistic&nbsp;&rarr;&nbsp;reject \(H_0\).</li>
+              </ul>
+            </div>
+            <div class="card accent">
+              <h3>Why this test</h3>
+              <p>
+                The characteristic function <strong>uniquely determines</strong> a distribution, so matching it checks
+                all moments at once — not just mean and variance. It is <strong>smooth and differentiable</strong>,
+                which is exactly what we will need for training later.
+              </p>
+            </div>
+          </div>
+          <p class="footnote">
+            Epps &amp; Pulley, <em>A test for normality based on the empirical characteristic function</em>, Biometrika,
+            1983.
+          </p>
+        </section>
+
+        <!-- ==================== 3. THE CHARACTERISTIC FUNCTION ==================== -->
+        <section>
+          <p class="eyebrow">The one object everything rests on</p>
+          <h2>The characteristic function (CF)</h2>
+          <div class="columns">
+            <div>
+              <div class="math-block">
+                \[ \varphi_X(t) = \mathbb{E}\!\left[e^{\,itX}\right] = \underbrace{\mathbb{E}[\cos tX]}_{\text{real}} +
+                i\,\underbrace{\mathbb{E}[\sin tX]}_{\text{imag}} \]
+              </div>
+              <ul class="stack-tight">
+                <li>
+                  The Fourier transform of a distribution; it <strong>determines the distribution uniquely</strong>.
+                </li>
+                <li>
+                  Standard normal target: \(\; \varphi_0(t) = e^{-t^2/2}\; \) <br />
+                  purely real with \(\varphi_0(t=0) = 1\) and \(\varphi_0(t) \to 0\) as \(|t| \to \infty\).
+                </li>
+                <li>
+                  From data we use the <strong>empirical CF</strong> \(\displaystyle
+                  \hat{\varphi}(t)=\tfrac1N\!\sum\nolimits_{n=1}^{N} e^{\,itx_n}\).
+                </li>
+              </ul>
+              <p class="footnote">
+                <em>Right:</em> a skewed example. Its real part (solid) sags away from \(\varphi_0\) (dashed) and its
+                imaginary part (dotted) lifts off zero — <em>the "fingerprint" differs</em>.
+              </p>
+            </div>
+            <div>
+              <svg id="cf-fingerprint"></svg>
+              <div class="legend" style="margin-left: 5ch">
+                <span><i class="swatch sw-deep dash"></i> target \(\varphi_0(t)\)</span>
+                <span><i class="swatch sw-accent"></i> empirical CF (real)</span>
+                <span><i class="swatch sw-accent dot"></i> empirical CF (imag)</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 4. ACCEPT vs REJECT ==================== -->
+        <section>
+          <p class="eyebrow">What acceptance and rejection look like</p>
+          <h2>Two samples, two verdicts</h2>
+          <div class="columns">
+            <div class="card">
+              <h3 style="color: var(--deep)">looks Gaussian</h3>
+              <svg id="ex-accept-d"></svg>
+              <div class="verdict accept" style="margin-top: 10pt">
+                EP statistic <b id="ex-accept-stat">0.000</b> &nbsp;→&nbsp; accept \(H_0\)
+              </div>
+            </div>
+            <div class="card accent">
+              <h3 style="color: var(--accent)">shifted · narrow · skewed</h3>
+              <svg id="ex-reject-d"></svg>
+              <div class="verdict reject" style="margin-top: 10pt">
+                EP statistic <b id="ex-reject-stat">0.000</b> &nbsp;→&nbsp; reject \(H_0\)
+              </div>
+            </div>
+          </div>
+          <p style="text-align: center; margin: 14pt 0 2pt; font-size: 0.95em">
+            <b>Reject \(H_0\) when \(S > c_\alpha\)</b> &nbsp; where &nbsp; \(S = N\!\int_0^3\!|\hat\varphi-\varphi_0|^2
+            w(t)\,dt\)
+          </p>
+          <p class="footnote">
+            The cutoff \(c_\alpha\) is <em>not</em> hand-picked. \(\alpha\) is the false-alarm rate you accept — here
+            \(5\%\) of genuine Gaussians wrongly rejected. Simulate \(S\) on \(N\) true \(\mathcal{N}(0,1)\) samples and
+            take the value only a fraction \(\alpha\) of them exceed: that \((1-\alpha)\) quantile
+            <em>is</em> \(c_\alpha\). So smaller \(\alpha \Rightarrow\) larger \(c_\alpha\), stricter. The explicit
+            \(N\) in \(S\) is chosen so that shape barely moves as \(N\) grows (\(\alpha=0.05,\ N=400 \Rightarrow
+            c_\alpha \approx 2.9\)). A real sample still scatters to a median \(S \approx 0.76\), well under
+            \(c_\alpha\) — that slack is sampling noise.
+          </p>
+        </section>
+
+        <!-- ==================== 5. INTERACTIVE SLIDER ==================== -->
+        <section>
+          <p class="eyebrow">Feel the statistic</p>
+          <h2>Manipulate a distribution and watch the test react</h2>
+          <div id="sig-interactive">
+            <div class="columns">
+              <div>
+                <svg id="si-density"></svg>
+                <div class="legend">
+                  <span><i class="swatch sw-deep dash"></i> target \(\mathcal{N}(0,1)\)</span>
+                  <span><i class="swatch sw-accent"></i> your distribution</span>
+                </div>
+              </div>
+              <div>
+                <svg id="si-cf"></svg>
+                <div class="legend" style="margin-left: 5ch">
+                  <span><i class="swatch sw-deep dash"></i> target \(\varphi_0(t)\)</span>
+                  <span><i class="swatch sw-accent"></i> empirical CF (real) · shaded = discrepancy</span>
+                </div>
+              </div>
+            </div>
+            <div class="controls-row">
+              <div class="control">
+                <label>mean&nbsp;\(\mu\) <b id="v-mu">0.00</b></label>
+                <input id="s-mu" type="range" min="-2.5" max="2.5" step="0.01" value="0" />
+              </div>
+              <div class="control">
+                <label>std&nbsp;\(\sigma\) <b id="v-sigma">1.00</b></label>
+                <input id="s-sigma" type="range" min="0.2" max="2.5" step="0.01" value="1" />
+              </div>
+              <div class="control">
+                <label>skew <b id="v-skew">0.00</b></label>
+                <input id="s-skew" type="range" min="-1.2" max="1.2" step="0.01" value="0" />
+              </div>
+              <div class="control">
+                <div class="ep-readout">
+                  <span class="value" id="v-stat">0.000</span>
+                  <span class="label">Epps–Pulley statistic</span>
+                </div>
+                <div class="hint" id="v-verdict">looks Gaussian ✓</div>
+              </div>
+            </div>
+          </div>
+          <p class="footnote">
+            The Epps–Pulley statistic is sharply zero only at \(\mu=0,\ \sigma=1,\ \text{skew}=0\) and climbs
+            symmetrically away from it. The verdict flips at the set quantile cutoff \(\alpha=0.05\) with critical value
+            \(c_\alpha\approx2.9\). The graphs are simulated live from genuine \(\mathcal{N}(0,1)\) samples of size
+            \(N=400\).
+          </p>
+        </section>
+
+        <!-- ==================== 6. TEST -> REGULARIZER ==================== -->
+        <section>
+          <p class="eyebrow">From a test to a training signal</p>
+          <h2>SIGReg: don't test — <em>optimize</em></h2>
+          <div class="columns wide-left">
+            <div>
+              <ul>
+                <li>
+                  In a <strong>JEPA</strong>, an encoder maps inputs to embeddings. Left unconstrained it can
+                  <strong>collapse</strong>, i.e., every input maps to (nearly) the same vector.
+                </li>
+                <li>
+                  The LeJEPA paper proves the <em>ideal</em> embedding law is the
+                  <strong>isotropic Gaussian</strong> \(\mathcal{N}(0,I)\): it minimizes worst-case downstream risk and
+                  is, by construction, collapse-free.
+                </li>
+                <li>
+                  <strong>SIGReg</strong> = the Epps–Pulley statistic used as a differentiable loss. Minimizing it
+                  <strong>pushes embeddings</strong> onto that target.
+                </li>
+              </ul>
+            </div>
+            <div class="card" style="max-width: 460pt; justify-self: end">
+              <h3>The JEPA objective</h3>
+              <div class="math-block math-center">
+                \[ \mathcal{L} = \underbrace{\mathcal{L}_{\text{pred}}}_{\text{next-embedding}} \; + \; \lambda\,
+                \underbrace{\mathcal{L}_{\text{SIGReg}}}_{\text{isotropy}} \]
+              </div>
+              <p>
+                <em>No stop-gradient, no teacher/student, no whitening.</em> SIGReg matches the entire distribution.
+              </p>
+            </div>
+          </div>
+          <p class="footnote">
+            SIGReg introduced <em>in LeJEPA</em> by
+            <a href="https://arxiv.org/abs/2511.08544">Balestriero &amp; LeCun</a> and used as the regularizer in
+            <em>LeWorldModel</em> by <a href="https://arxiv.org/abs/2603.19312">Maes et&nbsp;al.</a>
+          </p>
+        </section>
+
+        <!-- ==================== 7. CRAMÉR–WOLD SLICING ==================== -->
+        <section>
+          <p class="eyebrow">Beating the curse of dimensionality</p>
+          <h2>Slice, then test in 1-D</h2>
+          <div class="columns">
+            <div>
+              <p style="margin-top: 0">
+                A \(D\)-dimensional normality test is hopeless at scale. The
+                <strong>Cramér–Wold</strong> theorem rescues us:
+              </p>
+              <div class="math-block math-center">
+                \[ \big(\forall\, a\in\mathbb{S}^{D-1}:\; a^{\!\top} X \sim \mathcal{N}(0,1)\big)
+                \;\;\Longleftrightarrow\;\; X \sim \mathcal{N}(0, I_D) \]
+              </div>
+              <p>
+                Matching <em>every</em> 1-D projection to a standard normal is the same as matching the full isotropic
+                Gaussian.
+              </p>
+              <p class="footnote">
+                <strong>Cramér–Wold:</strong> If \(\varphi_{a^{\!\top}X}=\varphi_{a^{\!\top}Y}\) for every
+                \(a\in\mathbb{S}^{D-1}\), then \(X\stackrel{d}{=}Y\) — the characteristic functions of all 1-D
+                projections determine the joint distribution.
+              </p>
+            </div>
+            <div>
+              <svg
+                id="cw-canvas"
+                class="plot"
+                style="aspect-ratio: 4 / 3; max-width: 780px; display: block; margin: 0 auto"
+                role="img"
+                aria-label="A non-Gaussian 2-D point cloud with three slice directions; each projection produces a different 1-D marginal density drawn along its line."
+              ></svg>
+              <p class="footnote" style="margin-top: 4pt; text-align: center">
+                An empirical distribution sliced along 3 directions \(a_1,a_2,a_3\). Each projection \(a_k^{\!\top}X\)
+                has a different marginal.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 8. FROM MATH TO CODE ==================== -->
+        <section>
+          <p class="eyebrow">From math to <a href="https://github.com/LeWorldModel/code">code</a></p>
+          <h2>SIGReg: sketching the algorithm</h2>
+          <ol class="pipeline">
+            <li>
+              <span class="step-num"></span>
+              <span class="step-text">draw \(P\) random unit directions (the slices)</span>
+              <span class="step-eq">\( a_p \sim \mathcal{U}(\mathbb{S}^{D-1}),\quad p = 1,\dots,P \)</span>
+            </li>
+            <li>
+              <span class="step-num"></span>
+              <span class="step-text">project the whole batch onto every slice</span>
+              <span class="step-eq"
+                >\( Z = X A^{\top} \in \mathbb{R}^{N\times P},\quad z^{(p)} = Z_{:,p} \in \mathbb{R}^{N}\quad \text{with
+                entries } z_n = a_p^{\top} x_n \)</span
+              >
+            </li>
+            <li>
+              <span class="step-num"></span>
+              <span class="step-text">form each projection's empirical CF</span>
+              <span class="step-eq"
+                >\( \hat{\varphi}_{a_p}(t) = \tfrac{1}{N}\sum\limits_{n=1}^{N} e^{\,i\,t\,z_n} \)</span
+              >
+            </li>
+            <li>
+              <span class="step-num"></span>
+              <span class="step-text">run the 1-D Epps–Pulley test on each slice</span>
+              <span class="step-eq"
+                >\( \begin{aligned} D(a_p) &= N\!\int_{0}^{3} \big|\hat{\varphi}_{a_p}(t) - \varphi_0(t)\big|^{2}
+                w(t)\,dt \\ &= N\!\int_{0}^{3}\!\Big[\big(\tfrac{1}{N}\!\sum_{n=1}^{N}\cos(t z_n)-\varphi_0(t)\big)^2 +
+                \big(\tfrac{1}{N}\!\sum_{n=1}^{N}\sin(t z_n)\big)^2\Big]\,w(t)\,dt \end{aligned} \)</span
+              >
+            </li>
+            <li>
+              <span class="step-num"></span>
+              <span class="step-text">average over slices</span>
+              <span class="step-eq"
+                >\( \mathcal{L}_{\text{SIGReg}} = \mathbb{E}_{a\sim\mathcal{U}(\mathbb{S}^{D-1})}\big[D(a)\big] \approx
+                \tfrac{1}{P}\sum\limits_{p=1}^{P} D(a_p) \)</span
+              >
+            </li>
+          </ol>
+          <p class="footnote" style="text-align: center; width: 76%; margin-left: auto; margin-right: auto">
+            <strong>Costs are linear in \(N\), \(D\), and \(P\)</strong>; rows of \(X\in\mathbb{R}^{N\times D}\) are the
+            batch \(x_n^{\top}\), rows of \(A\in\mathbb{R}^{P\times D}\) the slices \(a_p^{\top}\); target
+            \(\varphi_0(t) = e^{-t^2/2}\) and window \(w(t) = e^{-t^2/2}\) are numerically equal but play different
+            roles. \(\varphi_0\) is what the empirical CF is compared against, \(w(t)\) weights that comparison across
+            frequencies \(t\); the sums \(\tfrac{1}{N}\sum_n\cos(t z_n), \tfrac{1}{N}\sum_n\sin(t z_n)\) are the real
+            and imaginary parts of the empirical CF. All plain tensor ops, hence autograd flows straight back into the
+            encoder.
+          </p>
+        </section>
+
+        <!-- ==================== 10. ANIMATION ==================== -->
+        <section>
+          <p class="eyebrow">Putting it in motion</p>
+          <h2>Minimizing SIGReg / sliced Epps–Pulley statistic&nbsp;→&nbsp;isotropic Gaussian</h2>
+          <div class="video-wrap">
+            <video
+              src="assets/sigreg.mp4?v=5"
+              poster="assets/sigreg-poster.png?v=4"
+              muted
+              playsinline
+              controls
+              data-autoplay
+            ></video>
+          </div>
+          <p class="footnote" style="width: fit-content; margin-left: auto; margin-right: auto">
+            <em>Top:</em> A sheared, skewed, partially-collapsed 2-D embedding cloud (terracotta) flows to
+            \(\mathcal{N}(0,I)\) (teal) as the sliced EP loss falls to zero. <em>Bottom:</em> One projection's density
+            morphing onto the bell curve.
+          </p>
+        </section>
+
+        <!-- ==================== 11. TAKEAWAYS ==================== -->
+        <section class="title-slide" data-background-color="#14231f">
+          <p class="eyebrow">Takeaways</p>
+          <h1 style="font-size: 44pt">One test, one loss, no collapse</h1>
+          <ul style="color: var(--paper); margin-top: 6pt; font-size: 22pt">
+            <li>
+              SIGReg = a <em style="color: var(--accent-soft)">differentiable, sliced</em> Epps–Pulley normality test
+              used as a loss term.
+            </li>
+            <li>
+              It drives embeddings to \(\mathcal{N}(0,I)\) —
+              <em style="color: var(--accent-soft)">optimal</em> and
+              <em style="color: var(--accent-soft)">collapse-avoiding</em>.
+            </li>
+            <li>
+              Random projections (Cramér–Wold) keep it
+              <em style="color: var(--accent-soft)">linear in \(N\), \(P\), \(D\)</em>.
+            </li>
+            <li>Its implementation is ≈50 LOC with few hyper-parameters (\(N\), \(P\), quadrature nodes).</li>
+          </ul>
+        </section>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/highlight/highlight.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/math/math.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+    <script src="app.js?v=2"></script>
+    <script>
+      Reveal.initialize({
+        width: 1920,
+        height: 1080,
+        margin: 0.045,
+        hash: true,
+        slideNumber: "c/t",
+        transition: "slide",
+        plugins: [RevealNotes, RevealHighlight, RevealMath.KaTeX],
+      });
+    </script>
+  </body>
+</html>

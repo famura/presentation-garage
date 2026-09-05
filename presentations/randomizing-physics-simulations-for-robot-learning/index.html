@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 
 <html lang="en">
   <head>
@@ -8,7 +8,7 @@
 
     <!-- Set presentation specific meta-information -->
     <meta name="author" content="Fabio Muratore" />
-    <meta name="description" content="PhD Defense Test Talk" />
+    <meta name="description" content="PhD Defense" />
     <title>Randomizing Physics Simulations for Robot Learning</title>
 
     <!-- Load a specific math font for MathJax (load this before reveal) -->
@@ -31,11 +31,18 @@
     <link rel="stylesheet" href="dist/theme/famura.css" id="theme" />
 
     <!-- Theme used for syntax highlighted code (CDN) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@4.0.2/plugin/highlight/monokai.css" id="highlight-theme" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/reveal.js@4.0.2/plugin/highlight/monokai.css"
+      id="highlight-theme"
+    />
     <!-- alternatively zenburn -->
 
     <!-- Diagrams (CDN) -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/teone/reveal.js-diagram-plugin@56278938380f09e602c7c74a15b52b348a27a0ea/revealjs-diagram.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/gh/teone/reveal.js-diagram-plugin@56278938380f09e602c7c74a15b52b348a27a0ea/revealjs-diagram.css"
+    />
 
     <!-- Tab icon -->
     <link rel="icon" href="content/images/mechanical_arm.png" />
@@ -72,25 +79,42 @@
           <h4>Sim-to-Real Robot Learning</h4>
           <div style="width: 56%; float: left; text-align: left">
             <p style="margin-top: -8px">Make robots more versatile by enabling them to learn</p>
-            <p class="fragment" data-fragment-index="1">State-of-the-art learning algorithms require vast amounts of data</p>
+            <p class="fragment" data-fragment-index="1">
+              State-of-the-art learning algorithms require vast amounts of data
+            </p>
             <p class="fragment" data-fragment-index="2">Real-world data is very expensive</p>
             <p class="fragment" data-fragment-index="3">Physics simulators generate diverse data at low cost</p>
             <p class="fragment" data-fragment-index="4">Exploration in simulation is safe</p>
             <p class="fragment" data-fragment-index="5">Mind the <span class="famurabrightred">reality gap</span></p>
           </div>
           <div style="width: 44%; float: left">
-            <div class="fragment" data-fragment-index="1" style="display: flex; flex-direction: row; justify-content: center">
+            <div
+              class="fragment"
+              data-fragment-index="1"
+              style="display: flex; flex-direction: row; justify-content: center"
+            >
               <div class="captioned">
                 <img src="content/images/Levine--arm_farm_2.png" width="355px" alt="Google 'arm farm'" />
                 <div class="outer-bottom-center-caption">
-                  <a href="content/papers/Levine__Quillen--LearningHandEyeCoordinationForRoboticGraspingWitDeepLearningAndLargeScaleDataCollection.pdf">[Levine et al., Robotics Res., 2018]</a>
+                  <a
+                    href="content/papers/Levine__Quillen--LearningHandEyeCoordinationForRoboticGraspingWitDeepLearningAndLargeScaleDataCollection.pdf"
+                    >[Levine et al., Robotics Res., 2018]</a
+                  >
                 </div>
               </div>
             </div>
             <div style="display: flex; flex-direction: row; justify-content: center">
               <div class="captioned fragment" data-fragment-index="3" style="margin-top: 20px">
-                <img src="content/images/OpenAI--multiple_hands_3.png" width="355px" alt="OpenAI in-hand manipulation" />
-                <div class="outer-bottom-center-caption"><a href="content/papers/OpenAI--LearningDexterousInHandManipulation.pdf">[OpenAI et al., Robotics Res., 2020]</a></div>
+                <img
+                  src="content/images/OpenAI--multiple_hands_3.png"
+                  width="355px"
+                  alt="OpenAI in-hand manipulation"
+                />
+                <div class="outer-bottom-center-caption">
+                  <a href="content/papers/OpenAI--LearningDexterousInHandManipulation.pdf"
+                    >[OpenAI et al., Robotics Res., 2020]</a
+                  >
+                </div>
               </div>
             </div>
           </div>
@@ -99,8 +123,12 @@
         <section data-background-color="black">
           <div class="flex-container-row">
             <div class="captioned" style="width: 42vw">
-              <span class="inner-top-left-caption fragment fade-out" data-fragment-index="2"><span class="fragment strike" data-fragment-index="1">Learned in</span> the nominal simulation</span>
-              <span class="inner-top-left-caption fragment fade-in" data-fragment-index="2"><span class="famurabrightred">Overfitted to</span> the nominal simulation</span>
+              <span class="inner-top-left-caption fragment fade-out" data-fragment-index="2"
+                ><span class="fragment strike" data-fragment-index="1">Learned in</span> the nominal simulation</span
+              >
+              <span class="inner-top-left-caption fragment fade-in" data-fragment-index="2"
+                ><span class="famurabrightred">Overfitted to</span> the nominal simulation</span
+              >
               <video autoplay loop muted controls style="width: 100%; min-height: 215px">
                 <source src="content/videos/mujoco_wam-bic_not_transferable.mp4" type="video/mp4" />
               </video>
@@ -160,17 +188,21 @@
                 <p>Expected return for one domain</p>
                 <div class="r-stack">
                   <div class="fragment fade-in-then-out">
-                    \[ J(\theta, \hldomparam) = \mathbb{E}_{s_0 \sim \mu_\hldomparam(s_0)} \left[ \mathbb{E}_{ s_{t+1} \sim \mathcal{P}_\hldomparam \left(s_{t+1} | s_t, a_t \right),\ a_t \sim
-                    \pi_{\theta} \left( a_t | s_t \right) } \left[ \sum\nolimits_{t=0}^{T-1} \gamma^t r(s_t, a_t) \Big| \theta, \hldomparam, s_0 \right] \right] \]
+                    \[ J(\theta, \hldomparam) = \mathbb{E}_{s_0 \sim \mu_\hldomparam(s_0)} \left[ \mathbb{E}_{ s_{t+1}
+                    \sim \mathcal{P}_\hldomparam \left(s_{t+1} | s_t, a_t \right),\ a_t \sim \pi_{\theta} \left( a_t |
+                    s_t \right) } \left[ \sum\nolimits_{t=0}^{T-1} \gamma^t r(s_t, a_t) \Big| \theta, \hldomparam, s_0
+                    \right] \right] \]
                   </div>
                   <div class="fragment fade-in">
-                    \[ J(\theta, \hldomparam) = \mathbb{E}_{\tau \sim p(\tau)} \left[ \sum\nolimits_{t=0}^{T-1} \gamma^t r(s_t, a_t) \Big| \theta, \hldomparam, s_0 \right] \]
+                    \[ J(\theta, \hldomparam) = \mathbb{E}_{\tau \sim p(\tau)} \left[ \sum\nolimits_{t=0}^{T-1} \gamma^t
+                    r(s_t, a_t) \Big| \theta, \hldomparam, s_0 \right] \]
                   </div>
                 </div>
                 <!---->
                 <div class="fragment fade-in">
                   <p>Augmentation of the standard reinforcement learning objective</p>
-                  \[ \theta^\star = \arg\!\max_{\theta\in\Theta} \ \mathbb{E}_{\hldomparam \sim p(\hldomparam)} \left[ \mathbb{E}_{\tau \sim p(\tau)} \left[ J(\theta, \hldomparam) \right] \right] \]
+                  \[ \theta^\star = \arg\!\max_{\theta\in\Theta} \ \mathbb{E}_{\hldomparam \sim p(\hldomparam)} \left[
+                  \mathbb{E}_{\tau \sim p(\tau)} \left[ J(\theta, \hldomparam) \right] \right] \]
                 </div>
               </div>
             </div>
@@ -181,18 +213,34 @@
           <h4>Problems of 'Naive' Domain Randomization</h4>
           <div style="text-align: left; width: 110%">
             <div class="flex-container-row">
-              <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start">
+              <div
+                style="display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start"
+              >
                 <p>Does not specify <span class="famurabrightred"> how many simulation instances</span> to run</p>
-                <p class="fragment" data-fragment-index="1">Misses a well-motivated <span class="famurabrightred">stopping condition</span></p>
-                <p class="fragment" data-fragment-index="2">Requires a <span class="famurabrightred">hand-tuned</span> domain parameter distribution $p(\xi)$</p>
-                <p class="fragment" data-fragment-index="3">Does <span class="famurabrightred">not update</span> $p(\xi)$</p>
-                <p class="fragment" data-fragment-index="4"><span class="famurabrightred">Restricts</span> $p(\xi)$ to parametric probability distributions</p>
+                <p class="fragment" data-fragment-index="1">
+                  Misses a well-motivated <span class="famurabrightred">stopping condition</span>
+                </p>
+                <p class="fragment" data-fragment-index="2">
+                  Requires a <span class="famurabrightred">hand-tuned</span> domain parameter distribution $p(\xi)$
+                </p>
+                <p class="fragment" data-fragment-index="3">
+                  Does <span class="famurabrightred">not update</span> $p(\xi)$
+                </p>
+                <p class="fragment" data-fragment-index="4">
+                  <span class="famurabrightred">Restricts</span> $p(\xi)$ to parametric probability distributions
+                </p>
               </div>
-              <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start">
+              <div
+                style="display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start"
+              >
                 <p class="fragment famurablue" data-fragment-index="5">part 1</p>
                 <p class="fragment famurablue" data-fragment-index="5">part 1</p>
-                <p class="fragment famurablue" data-fragment-index="6">part 2 <span class="fragment" data-fragment-index="7">& 3</span></p>
-                <p class="fragment famurablue" data-fragment-index="6">part 2 <span class="fragment" data-fragment-index="7">& 3</span></p>
+                <p class="fragment famurablue" data-fragment-index="6">
+                  part 2 <span class="fragment" data-fragment-index="7">& 3</span>
+                </p>
+                <p class="fragment famurablue" data-fragment-index="6">
+                  part 2 <span class="fragment" data-fragment-index="7">& 3</span>
+                </p>
                 <p class="fragment famurablue" data-fragment-index="7">part 3</p>
               </div>
             </div>
@@ -234,21 +282,31 @@
           <div style="text-align: left">
             <p>
               When randomizing, sample-based optimization is optimistically biased
-              <a href="content/papers/Hobbs_Hepenstal--IsOptimizationOptimisticallyBiased.pdf">[Hobbs and Hepenstal, Water Resour. Res., 1989]</a>
+              <a href="content/papers/Hobbs_Hepenstal--IsOptimizationOptimisticallyBiased.pdf"
+                >[Hobbs and Hepenstal, Water Resour. Res., 1989]</a
+              >
             </p>
-            <p class="fragment" data-fragment-index="1">We define the <span class="famurablue"> Simulation Optimization Bias (SOB)</span></p>
+            <p class="fragment" data-fragment-index="1">
+              We define the <span class="famurablue"> Simulation Optimization Bias (SOB)</span>
+            </p>
             <div class="fragment" data-fragment-index="1">
               \[ \mathbb{b} \left[ \hat{J_n}(\theta^\star_n) \right] =<!---->
-              \underbrace{ \mathbb{E}_{\xi \sim p(\xi)} \left[ \class{famurabrightred}{\max_{\hat{\theta} \in \Theta}} \frac{1}{n}\sum_{i=1}^{n} J(\hat{\theta}, \xi_i) \right] }_{\textsf{optimum for
-              samples}} -<!---->
-              \underbrace{ \class{famurabrightred}{\max_{\theta \in \Theta}} \mathbb{E}_{\xi \sim p(\xi)} \left[ \frac{1}{n}\sum_{i=1}^{n} J(\theta, \xi_i) \right] }_{\textsf{true optimum}} \ge 0<!---->
+              \underbrace{ \mathbb{E}_{\xi \sim p(\xi)} \left[ \class{famurabrightred}{\max_{\hat{\theta} \in \Theta}}
+              \frac{1}{n}\sum_{i=1}^{n} J(\hat{\theta}, \xi_i) \right] }_{\textsf{optimum for samples}} -<!---->
+              \underbrace{ \class{famurabrightred}{\max_{\theta \in \Theta}} \mathbb{E}_{\xi \sim p(\xi)} \left[
+              \frac{1}{n}\sum_{i=1}^{n} J(\theta, \xi_i) \right] }_{\textsf{true optimum}} \ge 0<!---->
               \]
             </div>
-            <p class="fragment" data-fragment-index="2">as a <span class="famurablue">measure of performance loss</span> when transferring a policy to a different domain from the same distribution</p>
+            <p class="fragment" data-fragment-index="2">
+              as a <span class="famurablue">measure of performance loss</span> when transferring a policy to a different
+              domain from the same distribution
+            </p>
 
             <div class="references fragment" data-fragment-index="1" style="width: 110%">
               <p>
-                Muratore et al., <em>"Assessing Transferability from Simulation to Reality for Reinforcement Learning"</em>, <br />IEEE Transactions on Pattern Analysis and Machine Intelligence, 2021
+                Muratore et al.,
+                <em>"Assessing Transferability from Simulation to Reality for Reinforcement Learning"</em>, <br />IEEE
+                Transactions on Pattern Analysis and Machine Intelligence, 2021
               </p>
               <!-- <p>Muratore et al., <em>"Domain Randomization for Simulation-Based Policy Optimization with Transferability Assessment"</em>, Conference on Robot Learning, 2018</p> -->
             </div>
@@ -266,51 +324,73 @@
           <section>
             <h4>Optimizing for Transferability</h4>
             <div style="text-align: left">
-              <p>Computing the SOB is <span class="famurablue">intractable</span> due to $ \mathbb{E}_{\xi \sim p(\xi)}[ \max_{\hat{\theta} \in \Theta} \cdot ]$</p>
+              <p>
+                Computing the SOB is <span class="famurablue">intractable</span> due to $ \mathbb{E}_{\xi \sim p(\xi)}[
+                \max_{\hat{\theta} \in \Theta} \cdot ]$
+              </p>
               <!--\frac{1}{n}\sum_{i=1}^{n} J(\hat{\theta}, \xi_i)-->
               <div class="fragment">
                 <p>
                   But it <span class="famurablue">can be estimated</span> from the optimality gap
-                  <a href="content/papers/Mak__Wood--MonteCarloBoundingTechniques4DeterminingSolutionQualityInStochasticPrograms.pdf">[Mak et al., Oper. Res. Lett., 1999]</a>
+                  <a
+                    href="content/papers/Mak__Wood--MonteCarloBoundingTechniques4DeterminingSolutionQualityInStochasticPrograms.pdf"
+                    >[Mak et al., Oper. Res. Lett., 1999]</a
+                  >
                 </p>
                 <div>
                   \[ G(\theta^c) =<!---->
-                  \underbrace{ \max_{\theta \in \Theta} \mathbb{E}_{\xi \sim p(\xi)} \left[J(\theta, \xi)\right] }_{\textsf{best solution}} -<!---->
-                  \underbrace{ \mathbb{E}_{\xi \sim p(\xi)} \left[J(\theta^c, \xi) \right] }_{\textsf{candidate solution}} =<!---->
+                  \underbrace{ \max_{\theta \in \Theta} \mathbb{E}_{\xi \sim p(\xi)} \left[J(\theta, \xi)\right]
+                  }_{\textsf{best solution}} -<!---->
+                  \underbrace{ \mathbb{E}_{\xi \sim p(\xi)} \left[J(\theta^c, \xi) \right] }_{\textsf{candidate
+                  solution}} =<!---->
                   J(\theta^\star) - J(\theta^c) \ge 0<!---->
                   \]
                 </div>
               </div>
               <div class="fragment">
                 <p>which itself needs to be estimated form samples</p>
-                \[ \hat{G_n}(\theta^c) = \max_{\theta \in \Theta} \hat{J_n}(\theta) - \hat{J_n}(\theta^c) \ge G(\theta^c) \]
+                \[ \hat{G_n}(\theta^c) = \max_{\theta \in \Theta} \hat{J_n}(\theta) - \hat{J_n}(\theta^c) \ge
+                G(\theta^c) \]
               </div>
             </div>
           </section>
           <section>
             <h4>Decrease of the Estimated Optimality Gap</h4>
             <div style="text-align: left">
-              <p>The optimality gap decreases monotonically in expectation with increasing sample size of the domain parameters $\xi$</p>
+              <p>
+                The optimality gap decreases monotonically in expectation with increasing sample size of the domain
+                parameters $\xi$
+              </p>
               \[ \begin{align}<!---->
-              \mathbb{E}_\xi \left[\hat{J}_{n+1}(\theta^\star_{n+1})\right] &= \mathbb{E}_\xi \left[ \max_{\theta \in \Theta} \frac{1}{n+1} \sum_{i=1}^{n+1} J(\theta,\xi_i) \right] \\<!---->
-              &= \mathbb{E}_\xi \left[ \max_{\theta \in \Theta} \frac{1}{1+n} \sum_{i=1}^{n+1} \frac{1}{n} \sum_{j=1,j\neq i}^{n+1} J(\theta, \xi_j) \right]\\<!---->
-              &\le \mathbb{E}_\xi \left[ \frac{1}{1+n} \sum_{i=1}^{n+1} \max_{\theta \in \Theta} \frac{1}{n} \sum_{j=1,j\neq i}^{n+1} J(\theta, \xi_j) \right]\\<!---->
-              &= \frac{1}{1+n} \sum_{i=1}^{n+1} \mathbb{E}_\xi \left[ \max_{\theta \in \Theta} \hat{J_n}(\theta_{n}) \right]= \mathbb{E}_\xi \left[ \hat{J_n}(\theta^\star_{n}) \right]<!---->
+              \mathbb{E}_\xi \left[\hat{J}_{n+1}(\theta^\star_{n+1})\right] &= \mathbb{E}_\xi \left[ \max_{\theta \in
+              \Theta} \frac{1}{n+1} \sum_{i=1}^{n+1} J(\theta,\xi_i) \right] \\<!---->
+              &= \mathbb{E}_\xi \left[ \max_{\theta \in \Theta} \frac{1}{1+n} \sum_{i=1}^{n+1} \frac{1}{n}
+              \sum_{j=1,j\neq i}^{n+1} J(\theta, \xi_j) \right]\\<!---->
+              &\le \mathbb{E}_\xi \left[ \frac{1}{1+n} \sum_{i=1}^{n+1} \max_{\theta \in \Theta} \frac{1}{n}
+              \sum_{j=1,j\neq i}^{n+1} J(\theta, \xi_j) \right]\\<!---->
+              &= \frac{1}{1+n} \sum_{i=1}^{n+1} \mathbb{E}_\xi \left[ \max_{\theta \in \Theta} \hat{J_n}(\theta_{n})
+              \right]= \mathbb{E}_\xi \left[ \hat{J_n}(\theta^\star_{n}) \right]<!---->
               \end{align} \]
             </div>
           </section>
           <section>
             <h4>Connection Between the SOB and <br />the Optimality Gap</h4>
             <div style="text-align: left">
-              <p>The SOB can be expressed as the expectation of the difference between the approximated and the true optimality gap</p>
+              <p>
+                The SOB can be expressed as the expectation of the difference between the approximated and the true
+                optimality gap
+              </p>
               \[ \begin{align}<!---->
               \mathbb{E}_\xi \left[ \hat{G_n}(\theta^c) \right] &- G(\theta^c) \ge 0\\<!---->
-              \mathbb{E}_\xi \left[ \max_{\theta \in \Theta} \hat{J_n}(\theta) - \hat{J_n}(\theta^c) \right] &- \left( \max_{\theta \in \Theta} \mathbb{E}_\xi \left[ J(\theta, \xi) \right] -
-              \mathbb{E}_\xi \left[ J(\theta^c, \xi) \right] \right) \ge 0\\<!---->
-              \mathbb{E}_\xi \left[ \max_{\theta \in \Theta} \hat{J_n}(\theta) \right] \class{famurabrightgreen}{- \mathbb{E}_\xi \left[ \hat{J_n}(\theta^c) \right]} &- \max_{\theta \in \Theta}
-              \mathbb{E}_\xi \left[ J(\theta, \xi) \right] \class{famurabrightgreen}{+ \mathbb{E}_\xi \left[ J(\theta^c, \xi) \right]} \ge 0\\<!---->
+              \mathbb{E}_\xi \left[ \max_{\theta \in \Theta} \hat{J_n}(\theta) - \hat{J_n}(\theta^c) \right] &- \left(
+              \max_{\theta \in \Theta} \mathbb{E}_\xi \left[ J(\theta, \xi) \right] - \mathbb{E}_\xi \left[ J(\theta^c,
+              \xi) \right] \right) \ge 0\\<!---->
+              \mathbb{E}_\xi \left[ \max_{\theta \in \Theta} \hat{J_n}(\theta) \right] \class{famurabrightgreen}{-
+              \mathbb{E}_\xi \left[ \hat{J_n}(\theta^c) \right]} &- \max_{\theta \in \Theta} \mathbb{E}_\xi \left[
+              J(\theta, \xi) \right] \class{famurabrightgreen}{+ \mathbb{E}_\xi \left[ J(\theta^c, \xi) \right]} \ge 0\\<!---->
 
-              \mathbb{E}_\xi \left[ \max_{\theta \in \Theta} \hat{J_n}(\theta) \right] &- \max_{\theta \in \Theta} \mathbb{E}_\xi \left[ J(\theta, \xi) \right] = \class{famurablue}{\mathbb{b} \left[
+              \mathbb{E}_\xi \left[ \max_{\theta \in \Theta} \hat{J_n}(\theta) \right] &- \max_{\theta \in \Theta}
+              \mathbb{E}_\xi \left[ J(\theta, \xi) \right] = \class{famurablue}{\mathbb{b} \left[
               \hat{J_n}(\theta^\star_n) \right]} \ge 0\\<!---->
               \end{align} \]
             </div>
@@ -327,7 +407,9 @@
         <section>
           <section>
             <h4>Evaluation</h4>
-            <div style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; margin-top: 50px">
+            <div
+              style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; margin-top: 50px"
+            >
               <div class="captioned">
                 <img src="content/images/SPOTA--returns_qcp-st_violinplot.png" alt="returns qcp-st" height="250px" />
                 <div class="outer-top-left-caption">Cart-pole stabilization</div>
@@ -347,12 +429,26 @@
                 </div>
                 <div style="display: flex; flex-direction: column; text-align: left">
                   <span
-                    ><a href="content/papers/Muratore__Peters--AssessingTransferabilityFromSimulationToRealityForReinforcementLearning.pdf" style="color: #f2f2f2"
+                    ><a
+                      href="content/papers/Muratore__Peters--AssessingTransferabilityFromSimulationToRealityForReinforcementLearning.pdf"
+                      style="color: #f2f2f2"
                       >[Muratore et al., CoRL, 2018]</a
                     ></span
                   >
-                  <span><a href="content/papers/Rajeswaran__Levine--EPOpt-LearningRobustNeuralNetworkPoliciesUsingModelEnsembles.pdf" style="color: #f2f2f2">[Rajeswaran et al., ICLR, 2017]</a></span>
-                  <span><a href="content/papers/Schulman__Klimov--ProximalPolicyOptimizationAlgorithms.pdf" style="color: #f2f2f2">[Schulman et al., ArXiv, 2017]</a></span>
+                  <span
+                    ><a
+                      href="content/papers/Rajeswaran__Levine--EPOpt-LearningRobustNeuralNetworkPoliciesUsingModelEnsembles.pdf"
+                      style="color: #f2f2f2"
+                      >[Rajeswaran et al., ICLR, 2017]</a
+                    ></span
+                  >
+                  <span
+                    ><a
+                      href="content/papers/Schulman__Klimov--ProximalPolicyOptimizationAlgorithms.pdf"
+                      style="color: #f2f2f2"
+                      >[Schulman et al., ArXiv, 2017]</a
+                    ></span
+                  >
                 </div>
               </div>
             </div>
@@ -424,7 +520,10 @@
         </section>
 
         <section>
-          <h4>Evolution of the Upper Confidence Bound $\hat{G}^U_{n_r}(\theta^\star_{n_c})$ for the Ball-Balancer Experiment</h4>
+          <h4>
+            Evolution of the Upper Confidence Bound $\hat{G}^U_{n_r}(\theta^\star_{n_c})$ for the Ball-Balancer
+            Experiment
+          </h4>
           <div>
             <img src="content/images/SOB--UCBOG_evolution.png" alt="evolution of the UCBOG" height="420px" />
           </div>
@@ -436,17 +535,29 @@
             <dt>pros</dt>
             <dd>
               <ul>
-                <li class="famurabrightgreen">Yields a probabilistic guarantee on the transferability level of a learned policy</li>
-                <li class="fragment famurabrightgreen" data-fragment-index="1">The SOB decreases monotonically in expectation with increasing number of domains</li>
-                <li class="fragment famurabrightgreen" data-fragment-index="2">Provides a well-motivated stopping criterion</li>
+                <li class="famurabrightgreen">
+                  Yields a probabilistic guarantee on the transferability level of a learned policy
+                </li>
+                <li class="fragment famurabrightgreen" data-fragment-index="1">
+                  The SOB decreases monotonically in expectation with increasing number of domains
+                </li>
+                <li class="fragment famurabrightgreen" data-fragment-index="2">
+                  Provides a well-motivated stopping criterion
+                </li>
               </ul>
             </dd>
             <dt class="fragment" data-fragment-index="3">cons</dt>
             <dd>
               <ul>
-                <li class="fragment famurabrightred" data-fragment-index="3">Source and target domain are assumed to obey the same distribution</li>
-                <li class="fragment famurabrightred" data-fragment-index="4">The meta-iterations are computationally expensive</li>
-                <li class="fragment famurabrightred" data-fragment-index="5">The domain parameter distribution is static</li>
+                <li class="fragment famurabrightred" data-fragment-index="3">
+                  Source and target domain are assumed to obey the same distribution
+                </li>
+                <li class="fragment famurabrightred" data-fragment-index="4">
+                  The meta-iterations are computationally expensive
+                </li>
+                <li class="fragment famurabrightred" data-fragment-index="5">
+                  The domain parameter distribution is static
+                </li>
                 <!--$n_G/(1+n_G)$ solutions just for reference-->
               </ul>
             </dd>
@@ -480,9 +591,13 @@
             <dt class="fragment" data-fragment-index="1">goals</dt>
             <dd>
               <ul>
-                <li class="fragment" data-fragment-index="1"><span class="famurablue">Learn a control policy</span> in simulation <span class="famurablue">that transfers</span> to the real robot</li>
+                <li class="fragment" data-fragment-index="1">
+                  <span class="famurablue">Learn a control policy</span> in simulation
+                  <span class="famurablue">that transfers</span> to the real robot
+                </li>
                 <li class="fragment" data-fragment-index="2">
-                  <span class="famurablue">Adapt</span> the distribution over simulators using as <span class="famurablue">little real-world data</span> as possible
+                  <span class="famurablue">Adapt</span> the distribution over simulators using as
+                  <span class="famurablue">little real-world data</span> as possible
                 </li>
               </ul>
             </dd>
@@ -491,9 +606,12 @@
             <dd>
               <ul>
                 <li class="fragment" data-fragment-index="3">
-                  Model the connection between return and domain distribution parameters using a <span class="famurablue">Gaussian process</span> and apply Bayesian optimization
+                  Model the connection between return and domain distribution parameters using a
+                  <span class="famurablue">Gaussian process</span> and apply Bayesian optimization
                 </li>
-                <li class="fragment" data-fragment-index="4" style="width: 110%">Make the <span class="famurablue">real-world performance</span> the only objective</li>
+                <li class="fragment" data-fragment-index="4" style="width: 110%">
+                  Make the <span class="famurablue">real-world performance</span> the only objective
+                </li>
                 <!-- <li class="fragment" data-fragment-index="5">Update this model based on <span class="famurablue">sparse real-world data</span></li> -->
               </ul>
             </dd>
@@ -505,7 +623,8 @@
           <p>Bilevel optimization problem</p>
           <div class="flex-container-row-end fragment fade-in" data-fragment-index="1" style="align-items: baseline">
             <div class="flex-container-col margin-col">
-              \[ \class{famurabrightred}{\phi^\star} = \arg\!\max_{\phi\in\Phi} \ \mathbb{E}_{\tau \sim p(\tau)} \big[ J^{\textsf{real}} \left( \class{famurablue}{\theta^\star} \right) \big] \]
+              \[ \class{famurabrightred}{\phi^\star} = \arg\!\max_{\phi\in\Phi} \ \mathbb{E}_{\tau \sim p(\tau)} \big[
+              J^{\textsf{real}} \left( \class{famurablue}{\theta^\star} \right) \big] \]
             </div>
             <div class="flex-container-col margin-col famurabrightred">upper level (BO)</div>
           </div>
@@ -514,15 +633,16 @@
           </div>
           <div class="flex-container-row-end fragment fade-in" data-fragment-index="2" style="align-items: baseline">
             <div class="flex-container-col margin-col">
-              \[ \class{famurablue}{\theta^\star} (\class{famurabrightred}{\phi}) = \arg\! \max_{\theta\in\Theta} \ \mathbb{E}_{\xi \sim p_{\class{famurabrightred} \phi}(\xi)} \! \left[
-              \mathbb{E}_{\tau \sim p(\tau)} \left[ J^{\textsf{sim}} (\theta, \xi) \right] \right] \]
+              \[ \class{famurablue}{\theta^\star} (\class{famurabrightred}{\phi}) = \arg\! \max_{\theta\in\Theta} \
+              \mathbb{E}_{\xi \sim p_{\class{famurabrightred} \phi}(\xi)} \! \left[ \mathbb{E}_{\tau \sim p(\tau)}
+              \left[ J^{\textsf{sim}} (\theta, \xi) \right] \right] \]
             </div>
             <div class="flex-container-col margin-col famurablue">lower level (RL)</div>
           </div>
           <div class="references">
             <p>
-              Muratore et al., <em>"Data-Efficient Domain Randomization with Bayesian Optimization"</em>, <br />IEEE Robotics and Automation Letters / International Conference on Robotics and
-              Automation, 2021
+              Muratore et al., <em>"Data-Efficient Domain Randomization with Bayesian Optimization"</em>, <br />IEEE
+              Robotics and Automation Letters / International Conference on Robotics and Automation, 2021
             </p>
           </div>
         </section>
@@ -538,7 +658,9 @@
           <h4 style="width: 108%">BayRn Sim-to-Sim Experiment on the Furuta Pendulum</h4>
           <div class="captioned">
             <div class="outer-top-center-caption">
-              <div style="display: flex; flex-direction: row; justify-content: space-around; width: 700px; margin: auto">
+              <div
+                style="display: flex; flex-direction: row; justify-content: space-around; width: 700px; margin: auto"
+              >
                 <div>return:</div>
                 <div style="flex-grow: 3; padding-right: 95px">mean</div>
                 <div style="padding-right: 35px">standard deviation</div>
@@ -547,7 +669,8 @@
               <div class="outer-bottom-center-caption">
                 <span style="color: orange">&#9733;</span> maximum a posteriori domain distribution parameters <br />
                 <span style="color: firebrick">&#9733;</span> ground truth domain parameters <br />
-                <span style="color: lightgray">&#9679;</span> <span style="color: gray">&#9679;</span> <span style="color: black">&#9679;</span> darker circles are later samples
+                <span style="color: lightgray">&#9679;</span> <span style="color: gray">&#9679;</span>
+                <span style="color: black">&#9679;</span> darker circles are later samples
               </div>
             </div>
           </div>
@@ -588,7 +711,9 @@
         <section>
           <section>
             <h4>Evaluation</h4>
-            <div style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; margin-top: 50px">
+            <div
+              style="display: flex; flex-direction: row; flex-wrap: nowrap; justify-content: center; margin-top: 50px"
+            >
               <div class="captioned">
                 <img src="content/images/BayRn--returns_wam-bic_violinplot.png" alt="returns wam-bic" height="220px" />
                 <div class="outer-top-left-caption">Ball-in-a-cup</div>
@@ -609,15 +734,35 @@
                   <span style="color: #2ca02c">PPO (no randomization)</span>
                 </div>
                 <div style="display: flex; flex-direction: column; text-align: left">
-                  <span><a href="content/papers/Muratore__Peters--DataEfficientDomainRandomizationWithBayesianOptimization.pdf" style="color: #f2f2f2">[Muratore et al., RAL, 2021]</a></span>
                   <span
-                    ><a href="content/papers/Chebotar__Fox--ClosingTheSimToRealLoop-AdaptingSimulationRandomizationWithRealWorldExperience.pdf" style="color: #f2f2f2"
+                    ><a
+                      href="content/papers/Muratore__Peters--DataEfficientDomainRandomizationWithBayesianOptimization.pdf"
+                      style="color: #f2f2f2"
+                      >[Muratore et al., RAL, 2021]</a
+                    ></span
+                  >
+                  <span
+                    ><a
+                      href="content/papers/Chebotar__Fox--ClosingTheSimToRealLoop-AdaptingSimulationRandomizationWithRealWorldExperience.pdf"
+                      style="color: #f2f2f2"
                       >[Chebotar et al., ICRA, 2019]</a
                     ></span
                   >
                   <span> &ndash; </span>
-                  <span><a href="content/papers/Kober_Peters--LearningMotorPrimitivesForRobotics.pdf" style="color: #f2f2f2">[Kober et al., Machine Learning, 2011]</a></span>
-                  <span><a href="content/papers/Schulman__Klimov--ProximalPolicyOptimizationAlgorithms.pdf" style="color: #f2f2f2">[Schulman et al., ArXiv, 2017]</a></span>
+                  <span
+                    ><a
+                      href="content/papers/Kober_Peters--LearningMotorPrimitivesForRobotics.pdf"
+                      style="color: #f2f2f2"
+                      >[Kober et al., Machine Learning, 2011]</a
+                    ></span
+                  >
+                  <span
+                    ><a
+                      href="content/papers/Schulman__Klimov--ProximalPolicyOptimizationAlgorithms.pdf"
+                      style="color: #f2f2f2"
+                      >[Schulman et al., ArXiv, 2017]</a
+                    ></span
+                  >
                 </div>
               </div>
             </div>
@@ -655,8 +800,12 @@
             <dd>
               <ul>
                 <li class="famurabrightgreen">Yields a probabilistic model for the domain parameters</li>
-                <li class="famurabrightgreen fragment" data-fragment-index="1">Works with very limited data (scalar returns)</li>
-                <li class="famurabrightgreen fragment" data-fragment-index="2">Directly aims at improving the real-world performance</li>
+                <li class="famurabrightgreen fragment" data-fragment-index="1">
+                  Works with very limited data (scalar returns)
+                </li>
+                <li class="famurabrightgreen fragment" data-fragment-index="2">
+                  Directly aims at improving the real-world performance
+                </li>
               </ul>
             </dd>
             <dt class="fragment" data-fragment-index="3">cons</dt>
@@ -666,7 +815,9 @@
                   Scalability is bounded by GP input dimension, i.e., <br />
                   &#10886; 25 domain parameters will require tricks
                 </li>
-                <li class="fragment famurabrightred" data-fragment-index="4">Assumes a distribution family for every parameter</li>
+                <li class="fragment famurabrightred" data-fragment-index="4">
+                  Assumes a distribution family for every parameter
+                </li>
               </ul>
             </dd>
           </dl>
@@ -699,15 +850,29 @@
             <dt>goals</dt>
             <dd>
               <ul>
-                <li>Infer a distribution over simulators which explains the <span class="famurablue">observed real-world trajectories</span></li>
-                <li class="fragment" data-fragment-index="2">Capture <span class="famurablue">multi-modality</span> and <span class="famurablue">correlations</span></li>
-                <li class="fragment" data-fragment-index="3">Make <span class="famurablue">minimal assumptions</span> about the simulator (i.e., parameterized non-differentiable black-box)</li>
-                <li class="fragment" data-fragment-index="4">Strictly yield <span class="famurablue">physical plausible</span> domain parameters</li>
+                <li>
+                  Infer a distribution over simulators which explains the
+                  <span class="famurablue">observed real-world trajectories</span>
+                </li>
+                <li class="fragment" data-fragment-index="2">
+                  Capture <span class="famurablue">multi-modality</span> and
+                  <span class="famurablue">correlations</span>
+                </li>
+                <li class="fragment" data-fragment-index="3">
+                  Make <span class="famurablue">minimal assumptions</span> about the simulator (i.e., parameterized
+                  non-differentiable black-box)
+                </li>
+                <li class="fragment" data-fragment-index="4">
+                  Strictly yield <span class="famurablue">physical plausible</span> domain parameters
+                </li>
               </ul>
             </dd>
           </dl>
           <div class="references" style="width: 110%">
-            <p>Muratore et al., <em>"Neural Posterior Domain Randomization"</em>, Conference on Robot Learning, 2021 (accepted)</p>
+            <p>
+              Muratore et al., <em>"Neural Posterior Domain Randomization"</em>, Conference on Robot Learning, 2021
+              (accepted)
+            </p>
           </div>
         </section>
 
@@ -718,15 +883,28 @@
               <dt>method</dt>
               <dd>
                 <ul>
-                  <li>Use <span class="famurablue">normalizing flows</span> to estimate the domain parameter distribution</li>
-                  <li class="fragment" data-fragment-index="6">Employ <span class="famurablue">Likelihood-Free Inference (LFI)</span> to update the density estimator in a Bayesian way</li>
-                  <li class="fragment" data-fragment-index="7"><span class="famurablue">Mask out</span> infeasible domain parameter values using the prior</li>
-                  <li class="fragment" data-fragment-index="8"><span class="famurablue">Iteratively refine</span> the (conditional) posterior and the policy in a sim-to-real loop</li>
+                  <li>
+                    Use <span class="famurablue">normalizing flows</span> to estimate the domain parameter distribution
+                  </li>
+                  <li class="fragment" data-fragment-index="6">
+                    Employ <span class="famurablue">Likelihood-Free Inference (LFI)</span> to update the density
+                    estimator in a Bayesian way
+                  </li>
+                  <li class="fragment" data-fragment-index="7">
+                    <span class="famurablue">Mask out</span> infeasible domain parameter values using the prior
+                  </li>
+                  <li class="fragment" data-fragment-index="8">
+                    <span class="famurablue">Iteratively refine</span> the (conditional) posterior and the policy in a
+                    sim-to-real loop
+                  </li>
                 </ul>
               </dd>
             </dl>
             <div class="references" style="width: 110%">
-              <p>Muratore et al., <em>"Neural Posterior Domain Randomization"</em>, Conference on Robot Learning, 2021 (accepted)</p>
+              <p>
+                Muratore et al., <em>"Neural Posterior Domain Randomization"</em>, Conference on Robot Learning, 2021
+                (accepted)
+              </p>
             </div>
           </section>
 
@@ -743,19 +921,46 @@
           <div style="display: flex; flex-direction: row; justify-content: space-between">
             <div class="captioned" style="width: 42vw">
               <div class="outer-top-center-caption">
-                BayesSim <a href="content/papers/Ramos__Fox--BayesSim-AdaptiveDomainRandomizationViaProbabilisticInferenceForRoboticsSimulator.pdf">[Ramos et al., RSS, 2019]</a>
+                BayesSim
+                <a
+                  href="content/papers/Ramos__Fox--BayesSim-AdaptiveDomainRandomizationViaProbabilisticInferenceForRoboticsSimulator.pdf"
+                  >[Ramos et al., RSS, 2019]</a
+                >
               </div>
-              <img src="content/images/BayesSim--pend_posterior_round_evo.png" alt="posterior pair plots" style="object-fit: contain" />
+              <img
+                src="content/images/BayesSim--pend_posterior_round_evo.png"
+                alt="posterior pair plots"
+                style="object-fit: contain"
+              />
               <div class="outer-bottom-center-caption">
-                using SNPE-A <a href="content/papers/Papamakarios_Murray--FastefreeInferenceofSimulationModelsWithBayesianConditionalDensityEstimation.pdf">[Papamakarios et al., NIPS, 2016]</a> <br />
+                using SNPE-A
+                <a
+                  href="content/papers/Papamakarios_Murray--FastefreeInferenceofSimulationModelsWithBayesianConditionalDensityEstimation.pdf"
+                  >[Papamakarios et al., NIPS, 2016]</a
+                >
+                <br />
                 with a mixture of Gaussians
               </div>
             </div>
             <div class="captioned" style="width: 42vw">
-              <div class="outer-top-center-caption">NPDR <a href="content/papers/Muratore__Peters--NeuralPosteriorDomainRandomization.pdf">[Muratore et al., CoRL, 2021 (accepted)]</a></div>
-              <img src="content/images/NPDR--pend_posterior_round_evo.png" alt="posterior pair plots" style="object-fit: contain" />
+              <div class="outer-top-center-caption">
+                NPDR
+                <a href="content/papers/Muratore__Peters--NeuralPosteriorDomainRandomization.pdf"
+                  >[Muratore et al., CoRL, 2021 (accepted)]</a
+                >
+              </div>
+              <img
+                src="content/images/NPDR--pend_posterior_round_evo.png"
+                alt="posterior pair plots"
+                style="object-fit: contain"
+              />
               <div class="outer-bottom-center-caption">
-                using SNPE-C <a href="content/papers/Greenberg__Macke--AutomaticPosteriorTransformationForLikelihoodFreeInference.pdf">[Greenberg et al., ICML, 2019]</a> <br />
+                using SNPE-C
+                <a
+                  href="content/papers/Greenberg__Macke--AutomaticPosteriorTransformationForLikelihoodFreeInference.pdf"
+                  >[Greenberg et al., ICML, 2019]</a
+                >
+                <br />
                 with a normalizing flow
               </div>
             </div>
@@ -768,19 +973,34 @@
             <video autoplay loop muted controls style="height: 500px">
               <source src="content/videos/NPDR--mg_data_collection_crop.mp4" type="video/mp4" />
             </video>
-            <div class="outer-bottom-center-caption">fixed policy &ndash; standard mini-golf racket &ndash; ball tracked using Vicon system</div>
+            <div class="outer-bottom-center-caption">
+              fixed policy &ndash; standard mini-golf racket &ndash; ball tracked using Vicon system
+            </div>
           </div>
         </section>
 
         <section>
           <h4>Slices Through the Posteriors</h4>
           <div class="captioned">
-            <div class="outer-top-center-caption" style="display: flex; flex-direction: row; justify-content: space-between; width: 500px; margin: auto">
-              <a href="content/papers/Muratore__Peters--NeuralPosteriorDomainRandomization.pdf" style="color: #1f77b4"> <b>NPDR</b></a>
-              <a href="content/papers/Ramos__Fox--BayesSim-AdaptiveDomainRandomizationViaProbabilisticInferenceForRoboticsSimulator.pdf" style="color: #ff7f0e"><b>BayesSim</b></a>
+            <div
+              class="outer-top-center-caption"
+              style="display: flex; flex-direction: row; justify-content: space-between; width: 500px; margin: auto"
+            >
+              <a href="content/papers/Muratore__Peters--NeuralPosteriorDomainRandomization.pdf" style="color: #1f77b4">
+                <b>NPDR</b></a
+              >
+              <a
+                href="content/papers/Ramos__Fox--BayesSim-AdaptiveDomainRandomizationViaProbabilisticInferenceForRoboticsSimulator.pdf"
+                style="color: #ff7f0e"
+                ><b>BayesSim</b></a
+              >
               <span style="color: #2ca02c"><b>nominal</b></span>
             </div>
-            <img src="content/images/NPDR--mg_posterior_scatter.png" alt="posterior pair plots for mini-golf" height="500px" />
+            <img
+              src="content/images/NPDR--mg_posterior_scatter.png"
+              alt="posterior pair plots for mini-golf"
+              height="500px"
+            />
           </div>
         </section>
 
@@ -852,7 +1072,11 @@
 
           <section>
             <h4>Multi-Round Inference with SNPE-C in a <br />Sim-to-Sim Furuta Experiment</h4>
-            <img src="content/videos/NPDR--qq_rounds_sim2sim_Lr-Mp.gif" alt="qq posterior evolution over rounds" style="object-fit: contain" />
+            <img
+              src="content/videos/NPDR--qq_rounds_sim2sim_Lr-Mp.gif"
+              alt="qq posterior evolution over rounds"
+              style="object-fit: contain"
+            />
           </section>
         </section>
 
@@ -884,17 +1108,29 @@
             <dd>
               <ul>
                 <li class="famurabrightgreen">Yields a probabilistic model for the domain parameters</li>
-                <li class="famurabrightgreen fragment" data-fragment-index="1">Minimal assumption about the domain parameter distribution</li>
-                <li class="famurabrightgreen fragment" data-fragment-index="2">Capturing multi-modality and correlations</li>
-                <li class="famurabrightgreen fragment" data-fragment-index="3">Posterior samples are physically plausible</li>
-                <li class="famurabrightgreen fragment" data-fragment-index="4">Only requires be able to sample from the simulator</li>
+                <li class="famurabrightgreen fragment" data-fragment-index="1">
+                  Minimal assumption about the domain parameter distribution
+                </li>
+                <li class="famurabrightgreen fragment" data-fragment-index="2">
+                  Capturing multi-modality and correlations
+                </li>
+                <li class="famurabrightgreen fragment" data-fragment-index="3">
+                  Posterior samples are physically plausible
+                </li>
+                <li class="famurabrightgreen fragment" data-fragment-index="4">
+                  Only requires be able to sample from the simulator
+                </li>
               </ul>
             </dd>
             <dt class="fragment" data-fragment-index="4">cons</dt>
             <dd>
               <ul>
-                <li class="famurabrightred fragment" data-fragment-index="4">Bad initial policies hamper the inference</li>
-                <li class="famurabrightred fragment" data-fragment-index="5">Scalability of the LFI subroutine to higher number of domain parameters is unknown</li>
+                <li class="famurabrightred fragment" data-fragment-index="4">
+                  Bad initial policies hamper the inference
+                </li>
+                <li class="famurabrightred fragment" data-fragment-index="5">
+                  Scalability of the LFI subroutine to higher number of domain parameters is unknown
+                </li>
               </ul>
             </dd>
           </dl>
@@ -910,8 +1146,8 @@
           <section>
             <h4>This Thesis in a Sentence</h4>
             <p style="text-align: left; width: 90%; margin: auto">
-              Learning from randomized simulations is a promising and scalable approach for bringing (deep) learning methods to robotics, especially if the randomization scheme is adaptive and
-              physically grounded.
+              Learning from randomized simulations is a promising and scalable approach for bringing (deep) learning
+              methods to robotics, especially if the randomization scheme is adaptive and physically grounded.
             </p>
           </section>
         </section>
@@ -934,31 +1170,41 @@
             <!--style="transform: translate(-40px, 0)" would mimic the translation of the fade-right-->
             <div>
               <p>
-                <span class="fragment strike highlight-famurabrightgreen" data-fragment-index="1">Does not specify how many simulation instances to run</span>
+                <span class="fragment strike highlight-famurabrightgreen" data-fragment-index="1"
+                  >Does not specify how many simulation instances to run</span
+                >
                 <span class="fragment" data-fragment-index="1"> &leftarrow; SPOTA </span>
               </p>
             </div>
             <div>
               <p>
-                <span class="fragment strike highlight-famurabrightgreen" data-fragment-index="2">Misses a well-motivated stopping condition</span>
+                <span class="fragment strike highlight-famurabrightgreen" data-fragment-index="2"
+                  >Misses a well-motivated stopping condition</span
+                >
                 <span class="fragment" data-fragment-index="2"> &leftarrow; SPOTA & BayRn </span>
               </p>
             </div>
             <div>
               <p>
-                <span class="fragment strike highlight-famurabrightgreen" data-fragment-index="3">Requires a hand-tuned domain parameter distribution $p(\xi)$</span>
+                <span class="fragment strike highlight-famurabrightgreen" data-fragment-index="3"
+                  >Requires a hand-tuned domain parameter distribution $p(\xi)$</span
+                >
                 <span class="fragment" data-fragment-index="3"> &leftarrow; BayRn & NPDR </span>
               </p>
             </div>
             <div>
               <p>
-                <span class="fragment strike highlight-famurabrightgreen" data-fragment-index="4">Does not update $p(\xi)$</span>
+                <span class="fragment strike highlight-famurabrightgreen" data-fragment-index="4"
+                  >Does not update $p(\xi)$</span
+                >
                 <span class="fragment" data-fragment-index="4"> &leftarrow; BayRn & NPDR </span>
               </p>
             </div>
             <div>
               <p>
-                <span class="fragment strike highlight-famurabrightgreen" data-fragment-index="5">Restricts $p(\xi)$ to parametric probability distributions</span>
+                <span class="fragment strike highlight-famurabrightgreen" data-fragment-index="5"
+                  >Restricts $p(\xi)$ to parametric probability distributions</span
+                >
                 <span class="fragment" data-fragment-index="5"> &leftarrow; NPDR </span>
               </p>
             </div>
@@ -968,17 +1214,32 @@
         <section>
           <h4>Open Problems</h4>
           <div style="text-align: left">
-            <p class="fragment">Domain randomization methods <span class="famurabrightred">inherit the low repeatability</span> from their subroutines</p>
-            <p class="fragment">They have mostly been evaluated only on a <span class="famurabrightred">restrict problem class</span> (continuous control)</p>
+            <p class="fragment">
+              Domain randomization methods <span class="famurabrightred">inherit the low repeatability</span> from their
+              subroutines
+            </p>
+            <p class="fragment">
+              They have mostly been evaluated only on a
+              <span class="famurabrightred">restrict problem class</span> (continuous control)
+            </p>
           </div>
         </section>
 
         <section>
           <h4>Future Research</h4>
           <div style="text-align: left">
-            <p class="fragment"><span class="famurablue">Automated generation of simulations</span> (e.g., kinematic trees) from video data (i.e., real-to-sim-to-real)</p>
-            <p class="fragment">Accounting for the <span class="famurablue">cost of information collection</span> (i.e., optimal stopping / bounded optimality)</p>
-            <p class="fragment">Inferring from data which<span class="famurablue"> physical phenomena the simulator misses</span> (e.g., hypothesis testing)</p>
+            <p class="fragment">
+              <span class="famurablue">Automated generation of simulations</span> (e.g., kinematic trees) from video
+              data (i.e., real-to-sim-to-real)
+            </p>
+            <p class="fragment">
+              Accounting for the <span class="famurablue">cost of information collection</span> (i.e., optimal stopping
+              / bounded optimality)
+            </p>
+            <p class="fragment">
+              Inferring from data which<span class="famurablue"> physical phenomena the simulator misses</span> (e.g.,
+              hypothesis testing)
+            </p>
           </div>
         </section>
 
@@ -1011,12 +1272,22 @@
               <div class="flex-container-col" style="margin-right: 20px; text-align: left">
                 <p>
                   Estimating the simulation optimization bias <br />
-                  <a href="content/papers/Muratore__Peters--AssessingTransferabilityFromSimulationToRealityForReinforcementLearning.pdf"> SPOTA</a> (static randomization)<br />
+                  <a
+                    href="content/papers/Muratore__Peters--AssessingTransferabilityFromSimulationToRealityForReinforcementLearning.pdf"
+                  >
+                    SPOTA</a
+                  >
+                  (static randomization)<br />
                   <span class="famuragrey"> Stabilization & Ball balancing </span>
                 </p>
               </div>
               <div class="flex-container-col">
-                <img src="content/images/SOB--sketch_core_v2.png" alt="sketch of the SOB" width="125px" style="margin: 0px" />
+                <img
+                  src="content/images/SOB--sketch_core_v2.png"
+                  alt="sketch of the SOB"
+                  width="125px"
+                  style="margin: 0px"
+                />
               </div>
             </div>
 
@@ -1024,12 +1295,22 @@
               <div class="flex-container-col" style="margin-right: 20px; text-align: left">
                 <p>
                   Adapting the Distribution over Simulators Based on Limited Data<br />
-                  <a href="content/papers/Muratore__Peters--DataEfficientDomainRandomizationWithBayesianOptimization.pdf"> BayRn</a> (adaptive randomization)<br />
+                  <a
+                    href="content/papers/Muratore__Peters--DataEfficientDomainRandomizationWithBayesianOptimization.pdf"
+                  >
+                    BayRn</a
+                  >
+                  (adaptive randomization)<br />
                   <span class="famuragrey">Ball-in-a-cup & Swing-up and balance</span>
                 </p>
               </div>
               <div class="flex-container-col">
-                <img src="content/images/BayRn--gp_qq-su_sim_core.png" alt="GP qq-su sim-to-sim" width="125px" style="margin: 0px" />
+                <img
+                  src="content/images/BayRn--gp_qq-su_sim_core.png"
+                  alt="GP qq-su sim-to-sim"
+                  width="125px"
+                  style="margin: 0px"
+                />
               </div>
             </div>
 
@@ -1037,12 +1318,18 @@
               <div class="flex-container-col" style="margin-right: 20px; text-align: left">
                 <p>
                   Inferring the Posterior over Simulators with Minimal Assumptions<br />
-                  <a href="content/papers/Muratore__Peters--NeuralPosteriorDomainRandomization.pdf"> NPDR</a> (adaptive randomization)<br />
+                  <a href="content/papers/Muratore__Peters--NeuralPosteriorDomainRandomization.pdf"> NPDR</a> (adaptive
+                  randomization)<br />
                   <span class="famuragrey">Mini-golf & Swing-up and balance</span>
                 </p>
               </div>
               <div class="flex-container-col">
-                <img src="content/images/NPDR--mg_posterior_scatter_core.png" alt="posterior pair plots for mini-golf" width="125px" style="margin: 0px" />
+                <img
+                  src="content/images/NPDR--mg_posterior_scatter_core.png"
+                  alt="posterior pair plots for mini-golf"
+                  width="125px"
+                  style="margin: 0px"
+                />
               </div>
             </div>
           </div>
@@ -1057,43 +1344,68 @@
         <section>
           <section>
             <h4>Related Fields</h4>
-            <img src="content/images/sim-to-real_topology_trans.png" alt="sim-to-real topology" style="object-fit: contain" />
+            <img
+              src="content/images/sim-to-real_topology_trans.png"
+              alt="sim-to-real topology"
+              style="object-fit: contain"
+            />
           </section>
 
           <section>
             <h4>Relation of Sim-to-Real to Curriculum Learning</h4>
             <div style="text-align: left">
               <p>
-                The key idea behind curriculum learning is to increase the sample efficiency by scheduling the training process such that the agent first encounters ‘easier’ tasks and gradually
-                progresses to ‘harder’ ones.
+                The key idea behind curriculum learning is to increase the sample efficiency by scheduling the training
+                process such that the agent first encounters ‘easier’ tasks and gradually progresses to ‘harder’ ones.
               </p>
               <p>Curriculum learning does not aim at finding solutions robust to model uncertainty.</p>
-              <p>Curriculum learning methods may require a target distribution which is not defined in the domain randomization setting.</p>
+              <p>
+                Curriculum learning methods may require a target distribution which is not defined in the domain
+                randomization setting.
+              </p>
             </div>
           </section>
 
           <section>
             <h4>Relation of Sim-to-Real to Meta-Learning</h4>
             <div style="text-align: left">
-              <p>The goal of meta learning is to find a suitable set of initial weights, which when updated generalizes well to a new task.</p>
-              <p>Domain randomization on the other hand strives to directly solve a single task, generalizing over domain instances.</p>
+              <p>
+                The goal of meta learning is to find a suitable set of initial weights, which when updated generalizes
+                well to a new task.
+              </p>
+              <p>
+                Domain randomization on the other hand strives to directly solve a single task, generalizing over domain
+                instances.
+              </p>
             </div>
           </section>
 
           <section>
             <h4>Relation of Sim-to-Real to Transfer Learning</h4>
             <div style="text-align: left">
-              <p>Transfer learning covers a wide range of machine learning research, aiming at using knowledge leaned in the source domain to solve a task in the target domain.</p>
+              <p>
+                Transfer learning covers a wide range of machine learning research, aiming at using knowledge leaned in
+                the source domain to solve a task in the target domain.
+              </p>
               <p>Domain adaptation methods are in general suitable to tackle sim-to-real problems.</p>
-              <p>The keyword ‘sim-to-real’ specifically concerns regression and control problems where the focus lies on overcoming the mismatch between simulation and reality.</p>
+              <p>
+                The keyword ‘sim-to-real’ specifically concerns regression and control problems where the focus lies on
+                overcoming the mismatch between simulation and reality.
+              </p>
             </div>
           </section>
 
           <section>
             <h4>Relation of Sim-to-Real to Knowledge Distillation</h4>
             <div style="text-align: left">
-              <p>In the context of RL, knowledge distillation techniques can be used to compress the learned behavior of one or more teachers into a single student</p>
-              <p>This idea can be straightforwardly applied to sim-to-real robot learning, where the teachers can be policies optimal for specific domain instances.</p>
+              <p>
+                In the context of RL, knowledge distillation techniques can be used to compress the learned behavior of
+                one or more teachers into a single student
+              </p>
+              <p>
+                This idea can be straightforwardly applied to sim-to-real robot learning, where the teachers can be
+                policies optimal for specific domain instances.
+              </p>
               <p>Knowledge distillation has mainly been applied to multitask learning.</p>
             </div>
           </section>
@@ -1102,8 +1414,8 @@
             <h4>Relation of Sim-to-Real to System Identification</h4>
             <div style="text-align: left">
               <p>
-                The goal of system identification is to find the set of model parameters which fit the observed data best, typically by minimizing the prediction-dependent loss such as the
-                mean-squared error.
+                The goal of system identification is to find the set of model parameters which fit the observed data
+                best, typically by minimizing the prediction-dependent loss such as the mean-squared error.
               </p>
               <p>Sim-to-real approaches can incorporate system identification, but does not necessarily do so.</p>
             </div>
@@ -1113,26 +1425,39 @@
             <h4>Relation of Sim-to-Real to Distributional Robustness</h4>
             <div style="text-align: left">
               <p>
-                Distributional robust optimization is a framework to find the worst-case probabilistic model from a so-called ambiguity set, and subsequently set a policy which acts optimally in this
-                worst case
+                Distributional robust optimization is a framework to find the worst-case probabilistic model from a
+                so-called ambiguity set, and subsequently set a policy which acts optimally in this worst case
               </p>
-              <p>Under the lens of domain randomization, the ambiguity set closely relates to the distribution over domain parameters.</p>
+              <p>
+                Under the lens of domain randomization, the ambiguity set closely relates to the distribution over
+                domain parameters.
+              </p>
             </div>
           </section>
 
           <section>
             <h4>Relation of Sim-to-Real to Scenario Approach</h4>
             <div style="text-align: left">
-              <p>The scenario approach is a robust optimization technique, where a solution is obtained by only looking at a random sample of the chance constraints.</p>
+              <p>
+                The scenario approach is a robust optimization technique, where a solution is obtained by only looking
+                at a random sample of the chance constraints.
+              </p>
               <p>The closeness of the relation depends on the formulation of the constraints.</p>
-              <p>Unverified theorem: one can frame all state-of-the-art domain randomization methods as scenario optimization approach</p>
+              <p>
+                Unverified theorem: one can frame all state-of-the-art domain randomization methods as scenario
+                optimization approach
+              </p>
             </div>
           </section>
         </section>
 
         <section>
           <h4>Categorization of Domain Randomization</h4>
-          <img src="content/images/domain_randomization_topology_trans.png" alt="domain randomization topology" width="600px" />
+          <img
+            src="content/images/domain_randomization_topology_trans.png"
+            alt="domain randomization topology"
+            width="600px"
+          />
         </section>
 
         <section>
@@ -1168,9 +1493,18 @@
               He wrote about the 'reality gap' three decades ago, describing most of the problems encountered today
               <a href="content/papers/Brooks--ArtiﬁcialLifeAndRealRobots.pdf"> [Brooks, ECAL, 1992]</a>
             </p>
-            <p>He argues that researchers tend to solve problems in simulations which do not occur in the physical world (e.g., deadlocks in path planning)</p>
-            <p>He suggests behavioral programs that are like reflexes to match the real-time constraints (and be learned by genetic algorithms)</p>
-            <p>He raises the concern that the data delivered by sensors are not direct descriptions of the world as objects and their relationships</p>
+            <p>
+              He argues that researchers tend to solve problems in simulations which do not occur in the physical world
+              (e.g., deadlocks in path planning)
+            </p>
+            <p>
+              He suggests behavioral programs that are like reflexes to match the real-time constraints (and be learned
+              by genetic algorithms)
+            </p>
+            <p>
+              He raises the concern that the data delivered by sensors are not direct descriptions of the world as
+              objects and their relationships
+            </p>
           </div>
         </section>
 
@@ -1192,14 +1526,20 @@
           <h4>What Would I do with 5 Million &euro;?</h4>
           <div style="text-align: left">
             <p>
-              Research on a general-purpose <span class="famurablue">probabilistic physics simulator</span> with <span class="famurablue">automated hypothesis generation</span> for
+              Research on a general-purpose <span class="famurablue">probabilistic physics simulator</span> with
+              <span class="famurablue">automated hypothesis generation</span> for
               <span class="famurablue">missing phenomena</span>
             </p>
           </div>
           <h4 class="fragment">And Why?</h4>
           <div class="fragment" style="text-align: left">
-            <p class="famurabrightgreen">Missing effects (e.g., stick-slip) are typically the bottleneck for sim-to-real transferability</p>
-            <p class="famurabrightgreen">Tracking the likelihood of physics parameters allows to use efficient (Bayesian) methods (i.e., variational inference)</p>
+            <p class="famurabrightgreen">
+              Missing effects (e.g., stick-slip) are typically the bottleneck for sim-to-real transferability
+            </p>
+            <p class="famurabrightgreen">
+              Tracking the likelihood of physics parameters allows to use efficient (Bayesian) methods (i.e.,
+              variational inference)
+            </p>
           </div>
         </section>
 
@@ -1280,12 +1620,12 @@
                   // logoLeft: './content/images/HRI--logo_cropped_inverted_transparent.png',
                   text: "Fabio Muratore &ensp; | &ensp; Intelligent Autonomous Systems Group &ensp; | &ensp; Honda Research Institute Europe &ensp; | &ensp; 2021-10-11",
                 },
-              })
+              });
             },
           },
-          {src: "plugin/reveald3/reveald3.js"}, // https://github.com/gcalmettes/reveal.js-d3
+          { src: "plugin/reveald3/reveald3.js" }, // https://github.com/gcalmettes/reveal.js-d3
         ],
-      }) // end Reveal.initialize()
+      }); // end Reveal.initialize()
     </script>
 
     <!-- =============================================================================================================== -->
