@@ -62,6 +62,23 @@ tasks:
       - python3 scripts/bundle.py {{.CLI_ARGS}}
       - task: manifest
 
+  pdf:
+    desc: "Export a presentation to pdf/<name>.pdf (usage: task pdf -- my_presentation_name)"
+    silent: true
+    preconditions:
+      - sh: test -n "{{.CLI_ARGS}}" && test -f "presentations/{{.CLI_ARGS}}/index.html"
+        msg: "Usage: task pdf -- <presentation> (a folder under presentations/)"
+    cmds:
+      - mkdir -p pdf
+      - |
+        python3 -m http.server {{.PORT}} >/dev/null 2>&1 &
+        trap 'pkill -f "http.server {{.PORT}}"' EXIT
+        sleep 1
+        npx -y decktape reveal --size 1920x1080 \
+          "http://localhost:{{.PORT}}/presentations/{{.CLI_ARGS}}/index.html" \
+          "pdf/{{.CLI_ARGS}}.pdf"
+        echo "Wrote pdf/{{.CLI_ARGS}}.pdf"
+
   open:
     desc: Open the published garage on GitHub pages
     silent: true
